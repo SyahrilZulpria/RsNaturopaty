@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
-import 'package:rsnaturopaty/login.dart';
 import 'package:rsnaturopaty/verify.dart';
 import 'package:rsnaturopaty/widget/button_widget/ButtonOval.dart';
 import 'package:rsnaturopaty/widget/utils/Colors.dart';
@@ -259,11 +258,7 @@ class _RegistrasiState extends State<Registrasi> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) => const Login(),
-                  ),
-                );
+                Navigator.of(context).pop();
               },
               child: Text(
                 "Login",

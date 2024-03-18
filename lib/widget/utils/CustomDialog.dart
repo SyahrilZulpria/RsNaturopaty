@@ -88,9 +88,9 @@ class CustomDialog {
                     flex: 1,
                     child: Container(
                       child: CupertinoDialogAction(
-                          child: Text("Tutup",
-                              style:
-                                  TextStyle(fontSize: 16, color: colorPrimary)),
+                          child: const Text("Tutup",
+                              style: TextStyle(
+                                  fontSize: 16, color: headerBackground)),
                           onPressed: () {
                             Navigator.of(context).pop();
                             Navigator.of(context).pop();
@@ -140,9 +140,9 @@ class CustomDialog {
                     flex: 1,
                     child: Container(
                       child: CupertinoDialogAction(
-                          child: Text("Tutup",
-                              style:
-                                  TextStyle(fontSize: 16, color: colorPrimary)),
+                          child: const Text("Tutup",
+                              style: TextStyle(
+                                  fontSize: 16, color: headerBackground)),
                           onPressed: () {
                             for (int i = 0; i <= loop; i++) {
                               Navigator.of(context).pop();
@@ -190,9 +190,9 @@ class CustomDialog {
                     flex: 1,
                     child: Container(
                       child: CupertinoDialogAction(
-                        child: Text("Tutup",
-                            style:
-                                TextStyle(fontSize: 16, color: colorPrimary)),
+                        child: const Text("Tutup",
+                            style: TextStyle(
+                                fontSize: 16, color: headerBackground)),
                         onPressed: () {
                           nav;
                           Navigator.of(context).pop();
@@ -233,8 +233,8 @@ class CustomDialog {
           ),
           actions: <Widget>[
             CupertinoDialogAction(
-                child: Text("Tutup",
-                    style: TextStyle(fontSize: 16, color: colorPrimary)),
+                child: const Text("Tutup",
+                    style: TextStyle(fontSize: 16, color: headerBackground)),
                 onPressed: () {
                   Navigator.of(context).pushReplacement(CupertinoPageRoute(
                       builder: (context) => const VerifyPages()));
@@ -269,8 +269,8 @@ class CustomDialog {
           ),
           actions: <Widget>[
             CupertinoDialogAction(
-              child: Text("Tutup",
-                  style: TextStyle(fontSize: 16, color: colorPrimary)),
+              child: const Text("Tutup",
+                  style: TextStyle(fontSize: 16, color: headerBackground)),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -305,8 +305,8 @@ class CustomDialog {
           ),
           actions: <Widget>[
             CupertinoDialogAction(
-              child: Text("Tutup",
-                  style: TextStyle(fontSize: 16, color: colorPrimary)),
+              child: const Text("Tutup",
+                  style: TextStyle(fontSize: 16, color: headerBackground)),
               onPressed: () => logout(context),
             ),
           ],

@@ -41,7 +41,7 @@ class _NavCustomButtonState extends State<NavCustomButton> {
       ),
       bottomNavigationBar: CurvedNavigationBar(
         color: Colors.white,
-        buttonBackgroundColor: colorPrimary,
+        buttonBackgroundColor: headerBackground,
         backgroundColor: Colors.transparent,
         animationCurve: Curves.easeInOut,
         animationDuration: const Duration(milliseconds: 300),

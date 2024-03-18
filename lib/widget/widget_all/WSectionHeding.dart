@@ -22,7 +22,7 @@ class WSectionHeding extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold, color: textColor),
+              fontSize: 15, fontWeight: FontWeight.bold, color: textColor),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
 

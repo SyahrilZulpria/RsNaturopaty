@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:rsnaturopaty/login.dart';
+import 'package:rsnaturopaty/screen/Setting/profile/profile_pages.dart';
 import 'package:rsnaturopaty/widget/button_widget/IconSettingPages.dart';
 import 'package:rsnaturopaty/widget/utils/Colors.dart';
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
@@ -24,6 +25,10 @@ class _SettingPagesState extends State<SettingPages> {
   String noPhone = "";
   String log = "";
 
+  List listDompet = [];
+  List listPoint = [];
+  List listCustomer = [];
+
   @override
   void initState() {
     super.initState();
@@ -42,6 +47,105 @@ class _SettingPagesState extends State<SettingPages> {
       noPhone = sp.getString("noPhone")!;
       log = sp.getString("log")!;
     });
+    saldoDompet();
+    saldoPoint();
+    getDataCustomer();
+  }
+
+  getDataCustomer() async {
+    try {
+      final response = await http
+          .get(Uri.parse(Endpoint.getCustomer), headers: <String, String>{
+        //'Content-Type': 'application/json',
+        'X-auth-token': token,
+      }).timeout(const Duration(seconds: 60));
+      if (response.statusCode == 200) {
+        print('status code: ${response.statusCode}');
+        final Map<String, dynamic> responseJson =
+            json.decode(response.body.toString());
+
+        final Map<String, dynamic> dataCustomer = responseJson['content'];
+        print(dataCustomer);
+        setState(() {
+          listCustomer = [dataCustomer];
+        });
+        print("============Hasil Get data listCustomer===========");
+        print(listCustomer);
+      } else {
+        CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
+        print('Login failed with status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      CustomDialog().warning(context, '', e.toString());
+    }
+  }
+
+  saldoDompet() async {
+    print(Endpoint.getDompet);
+    try {
+      var resBody = '{"limit":"100", "offset": "0"}';
+      final response = await http
+          .post(Uri.parse(Endpoint.getDompet),
+              headers: <String, String>{
+                'Content-Type': 'application/json',
+                'X-auth-token': token,
+              },
+              body: resBody)
+          .timeout(const Duration(seconds: 60));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseJson =
+            json.decode(response.body.toString());
+        print(responseJson);
+        //List<dynamic> dataDompet = responseJson['content'];
+        final Map<String, dynamic> content = responseJson['content'];
+        final int balance = content['balance'];
+        setState(() {
+          listDompet = [balance.toString()];
+        });
+        print("============Hasil Get data===========");
+        print(listDompet);
+        print("========================");
+      } else {
+        CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
+        print('Login failed with status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      CustomDialog().warning(context, '', e.toString());
+    }
+  }
+
+  saldoPoint() async {
+    print(Endpoint.getDompet);
+    try {
+      var resBody = '{"limit":"100", "offset": "0"}';
+      final response = await http
+          .post(Uri.parse(Endpoint.getPoint),
+              headers: <String, String>{
+                'Content-Type': 'application/json',
+                'X-auth-token': token,
+              },
+              body: resBody)
+          .timeout(const Duration(seconds: 60));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseJson =
+            json.decode(response.body.toString());
+        print(responseJson);
+        //List<dynamic> dataDompet = responseJson['content'];
+        final Map<String, dynamic> content = responseJson['content'];
+        final int balance = content['balance'];
+        setState(() {
+          listPoint = [balance.toString()];
+        });
+        print("============Hasil Get data===========");
+        print(listPoint);
+        print("========================");
+      } else {
+        CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
+        print('Login failed with status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      CustomDialog().warning(context, '', e.toString());
+    }
   }
 
   logOutApi() async {
@@ -94,6 +198,7 @@ class _SettingPagesState extends State<SettingPages> {
           "Setting",
           style: TextStyle(color: Colors.white),
         ),
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.purple,
       ),
       body: SingleChildScrollView(
@@ -114,38 +219,43 @@ class _SettingPagesState extends State<SettingPages> {
                     top: 20, bottom: 15, right: 20, left: 20),
                 child: Column(
                   children: [
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Icon(Icons.more_vert),
-                      ],
-                    ),
+                    // const Row(
+                    //   mainAxisAlignment: MainAxisAlignment.end,
+                    //   children: [
+                    //     Icon(Icons.more_vert),
+                    //   ],
+                    // ),
                     Column(
                       children: [
                         Container(
                           width: 50,
                           height: 50,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             image: DecorationImage(
-                                image: AssetImage('assets/images/nophoto.jpg'),
+                                image: listCustomer.isNotEmpty &&
+                                        listCustomer[0]['image'] != null
+                                    ? NetworkImage(listCustomer[0]['image'])
+                                    : const AssetImage(
+                                            'assets/images/nophoto.jpg')
+                                        as ImageProvider,
                                 fit: BoxFit.cover),
                           ),
                         ),
                         const SizedBox(height: 15),
                         SizedBox(
                           width: (size.width - 20) * 0.6,
-                          child: const Column(
+                          child: Column(
                             children: [
                               Text(
-                                "Nama",
-                                style: TextStyle(
+                                name.isNotEmpty ? name : "Guest",
+                                style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black),
                               ),
-                              SizedBox(height: 5),
-                              Text(
+                              const SizedBox(height: 5),
+                              const Text(
                                 "Level",
                                 style: TextStyle(
                                     fontSize: 13,
@@ -161,19 +271,21 @@ class _SettingPagesState extends State<SettingPages> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const Column(
+                        Column(
                           children: [
-                            Text(
+                            const Text(
                               "Saldo Ku",
                               style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.black),
                             ),
-                            SizedBox(height: 5),
+                            const SizedBox(height: 5),
                             Text(
-                              "Rp 100.000",
-                              style: TextStyle(
+                              listDompet.isNotEmpty
+                                  ? "Rp ${listDompet.first}"
+                                  : "Rp 0",
+                              style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.black),
@@ -205,9 +317,11 @@ class _SettingPagesState extends State<SettingPages> {
                                 const SizedBox(
                                   width: 5,
                                 ),
-                                const Text(
-                                  "100.000",
-                                  style: TextStyle(
+                                Text(
+                                  listPoint.isNotEmpty
+                                      ? " ${listPoint.first}"
+                                      : " 0",
+                                  style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.black),
@@ -324,6 +438,11 @@ class _SettingPagesState extends State<SettingPages> {
                           color: Colors.grey,
                           icon: CupertinoIcons.person_alt_circle_fill,
                           onTap: () {
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (context) => const ProfilePage(),
+                              ),
+                            );
                             print("my Account");
                           },
                         ),
@@ -371,18 +490,18 @@ class _SettingPagesState extends State<SettingPages> {
               )),
           actions: <Widget>[
             CupertinoDialogAction(
-              child: Text("Tidak",
+              child: const Text("Tidak",
                   style: TextStyle(
                     fontSize: 16,
-                    color: colorPrimary,
+                    color: headerBackground,
                   )),
               onPressed: () => Navigator.pop(context),
             ),
             CupertinoDialogAction(
-              child: Text("Ya",
+              child: const Text("Ya",
                   style: TextStyle(
                     fontSize: 16,
-                    color: colorPrimary,
+                    color: headerBackground,
                   )),
               onPressed: () => logOutApi(),
             ),
