@@ -1,14 +1,22 @@
 import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-//import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:intl/intl.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
+import 'package:rsnaturopaty/login.dart';
 import 'package:rsnaturopaty/screen/Home/Article_pages/article_pages.dart';
+import 'package:rsnaturopaty/screen/Home/Article_pages/discover_article.dart';
+import 'package:rsnaturopaty/screen/Home/Article_pages/pages_article.dart';
+import 'package:rsnaturopaty/screen/Home/Kategory_Home/about_as.dart';
+import 'package:rsnaturopaty/screen/Home/Notification/page_notification.dart';
+import 'package:rsnaturopaty/screen/Home/Kategory_Home/team_member.dart';
+import 'package:rsnaturopaty/screen/Setting/wallet_poiny/history_point.dart';
+import 'package:rsnaturopaty/screen/Setting/wallet_poiny/history_wallet.dart';
 import 'package:rsnaturopaty/widget/utils/Colors.dart';
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
+import 'package:rsnaturopaty/widget/utils/ImagesContainer.dart';
 import 'package:rsnaturopaty/widget/widget_all/WSectionHeding.dart';
 import 'package:rsnaturopaty/widget/widget_banner/SliderViewBanner.dart';
 import 'package:rsnaturopaty/widget/widget_kategori/WMenuKategori.dart';
@@ -39,22 +47,10 @@ class _HomePagesState extends State<HomePages> {
   List hasilTransksiDompet = [];
   List listPoint = [];
   List listArticle = [];
+  List jumlahNotif = [];
   int activeIndex = 0;
 
-  //final storage = const FlutterSecureStorage();
-
-  final urlImages = [
-    'assets/images/Indonesia_map.png',
-    "assets/images/Product.png",
-    'assets/images/Indonesia_map.png',
-  ];
-  final iklanCategory = ['Testing', 'Product', 'Maps'];
-  final titleIklan = [
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
-    'Lorem ipsum dolor sit amet, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
-  ];
-  final mediaIklan = ['CNN', 'DETIK', 'LIPUTAN'];
+  int _notificationCount = 0;
 
   final controller = CarouselController();
 
@@ -80,6 +76,7 @@ class _HomePagesState extends State<HomePages> {
     });
     saldoDompet();
     saldoPoint();
+    getNotification();
   }
 
   imgSlider() async {
@@ -94,25 +91,46 @@ class _HomePagesState extends State<HomePages> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
-
-        print(responseJson['content']);
         List<dynamic> imagesData = responseJson['content']['result'];
         setState(() {
           listImgSlider = imagesData
               .map((imageData) => imageData['image'].toString())
               .toList();
         });
-        print("=========================");
-        print(imagesData);
-        print("=========================");
-        print(listImgSlider);
-        print("=========================");
-        print("=========== IMAGE ==============");
       } else {
         print("Get data failed with status code: ${response.statusCode}");
       }
     } catch (e) {
       CustomDialog().warning(context, '', e.toString());
+    }
+  }
+
+  getNotification() async {
+    print(Endpoint.getNotification);
+    try {
+      var notifBody =
+          '{"type":"", "campaign":"", "read":"0", "limit":"50", "offset":"0"}';
+      final response = await http
+          .post(Uri.parse(Endpoint.getNotification),
+              headers: <String, String>{
+                'Content-Type': 'application/json',
+                'X-auth-token': token,
+              },
+              body: notifBody)
+          .timeout(const Duration(seconds: 60));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseJson =
+            json.decode(response.body.toString());
+        setState(() {
+          _notificationCount = responseJson['content'].length;
+        });
+        // print("============= TOTAL DATA ============");
+        // print(_notificationCount);
+      } else {
+        print("Get data Notif failed with status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      //CustomDialog().warning(context, '', e.toString());
     }
   }
 
@@ -130,32 +148,11 @@ class _HomePagesState extends State<HomePages> {
   //     if (response.statusCode == 200) {
   //       final Map<String, dynamic> responseJson =
   //           json.decode(response.body.toString());
-  //       dataLoginToSP(responseJson['content']);
+  //       print(responseJson);
   //     }
   //   } catch (e) {
   //     CustomDialog().warning(context, '', e.toString());
   //   }
-  // }
-
-  // dataLoginToSP(var data) async {
-  //   final sp = await SharedPreferences.getInstance();
-
-  //   print("----================--------");
-  //   print("Data Reg");
-  //   //print(data['userid']);
-  //   print(data['name']);
-  //   print(data['username'].toString());
-  //   print(data['phone'].toString());
-  //   print(data['log'].toString());
-  //   print(data['status'].toString());
-  //   print("----================--------");
-
-  //   sp.setString('userId', data['userid'].toString());
-  //   sp.setString('name', data['name'].toString());
-  //   sp.setString('email', data['username'].toString());
-  //   sp.setString('noPhone', data['phone'].toString());
-  //   sp.setString('log', data['log'].toString());
-  //   sp.setString('status', data['status'].toString());
   // }
 
   saldoDompet() async {
@@ -173,22 +170,17 @@ class _HomePagesState extends State<HomePages> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
-        print(responseJson);
-        //List<dynamic> dataDompet = responseJson['content'];
         final Map<String, dynamic> content = responseJson['content'];
         final int balance = content['balance'];
         setState(() {
           listDompet = [balance.toString()];
         });
-        print("============Hasil Get data===========");
-        print(listDompet);
-        print("========================");
       } else {
-        CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
+        //CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
         print('Login failed with status code: ${response.statusCode}');
       }
     } catch (e) {
-      CustomDialog().warning(context, '', e.toString());
+      //CustomDialog().warning(context, '', e.toString());
     }
   }
 
@@ -207,46 +199,43 @@ class _HomePagesState extends State<HomePages> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
-        print(responseJson);
-        //List<dynamic> dataDompet = responseJson['content'];
         final Map<String, dynamic> content = responseJson['content'];
         final int balance = content['balance'];
         setState(() {
           listPoint = [balance.toString()];
         });
-        print("============Hasil Get data===========");
-        print(listPoint);
-        print("========================");
       } else {
-        CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
+        //CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
         print('Login failed with status code: ${response.statusCode}');
       }
     } catch (e) {
-      CustomDialog().warning(context, '', e.toString());
+      // CustomDialog().warning(context, '', e.toString());
     }
   }
 
   articlePermalink() async {
-    print(Endpoint.getArticlePermalink);
+    print(Endpoint.categoryArticle);
     try {
-      final response = await http.get(
-        Uri.parse(Endpoint.getArticlePermalink),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'X-auth-token': 'X-auth-token',
-        },
-      ).timeout(const Duration(seconds: 60));
+      var resBody =
+          '{ "category":27, "limit": 10, "offset": 0, "orderby": "", "order": "asc"}';
+      final response = await http
+          .post(Uri.parse(Endpoint.categoryArticle),
+              headers: <String, String>{
+                'Content-Type': 'application/json',
+                'X-auth-token': 'X-auth-token',
+              },
+              body: resBody)
+          .timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
-        final Map<String, dynamic> articlePromo = responseJson['content'];
-        print(articlePromo);
+        final articlePromo = responseJson['content']['result'];
         setState(() {
-          listArticle = [articlePromo];
+          listArticle = List.from(articlePromo);
         });
       } else {
-        CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
+        //CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
         print('Login failed with status code: ${response.statusCode}');
       }
     } catch (e) {
@@ -270,12 +259,42 @@ class _HomePagesState extends State<HomePages> {
         ),
         automaticallyImplyLeading: false,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            color: Colors.white,
-            onPressed: () {
-              // Tambahkan logika notifikasi di sini
-            },
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.notifications),
+                color: Colors.white,
+                onPressed: () {
+                  if (_notificationCount != 0) {
+                    Navigator.of(context).push(CupertinoPageRoute(
+                        builder: (context) => const NotificationPages()));
+                  } else {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => const Login()));
+                  }
+                },
+              ),
+              _notificationCount != 0
+                  ? Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.red,
+                        ),
+                        child: Text(
+                          _notificationCount.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ],
           ),
         ],
       ),
@@ -304,86 +323,124 @@ class _HomePagesState extends State<HomePages> {
               ),
             ),
             Container(
-              margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
+              margin: const EdgeInsets.only(
+                  top: 20, right: 20, left: 20, bottom: 15),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(25),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 3,
-                  ),
+                boxShadow: [
+                  BoxShadow(color: Colors.grey.shade400, blurRadius: 3),
                 ],
               ),
               child: Padding(
                 padding: const EdgeInsets.only(
-                    top: 20, bottom: 20, right: 20, left: 20),
+                    top: 20, bottom: 15, right: 20, left: 20),
                 child: Column(
                   children: [
+                    // const Row(
+                    //   mainAxisAlignment: MainAxisAlignment.end,
+                    //   children: [
+                    //     Icon(Icons.more_vert),
+                    //   ],
+                    // ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Column(
-                          children: [
-                            const Text(
-                              "Saldo Ku",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              listDompet.isNotEmpty
-                                  ? "Rp ${listDompet.first}"
-                                  : "Rp 0",
-                              style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black),
-                            )
-                          ],
+                        InkWell(
+                          onTap: () {
+                            print("Saldo ku");
+                            if (listDompet.isNotEmpty) {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const HistoryWallet(),
+                                ),
+                              );
+                            } else {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Login(),
+                                ),
+                              );
+                            }
+                          },
+                          child: Column(
+                            children: [
+                              const Text(
+                                "Saldo Ku",
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                listDompet.isNotEmpty ? listDompet.first : " 0",
+                                style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black),
+                              )
+                            ],
+                          ),
                         ),
                         Container(
                           width: 0.5,
                           height: 40,
-                          color: Colors.black38,
+                          color: Colors.black,
                         ),
-                        Column(
-                          children: [
-                            const Text(
-                              "Point Ku",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black),
-                            ),
-                            const SizedBox(height: 5),
-                            Row(
-                              children: [
-                                Image.asset(
-                                  "assets/icons/reward.png",
-                                  width: 30,
-                                  height: 30,
+                        InkWell(
+                          onTap: () {
+                            print("Point Ku");
+                            if (listPoint.isNotEmpty) {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const HistoryPoint(),
                                 ),
-                                const SizedBox(
-                                  width: 5,
+                              );
+                            } else {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Login(),
                                 ),
-                                Text(
-                                  listPoint.isNotEmpty
-                                      ? " ${listPoint.first}"
-                                      : " 0",
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black),
-                                )
-                              ],
-                            ),
-                          ],
+                              );
+                            }
+                          },
+                          child: Column(
+                            children: [
+                              const Text(
+                                "Point Ku",
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black),
+                              ),
+                              const SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/reward.png", // Ganti dengan path gambar poin Anda
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    listPoint.isNotEmpty
+                                        ? listPoint.first
+                                        : " 0",
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ],
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -414,7 +471,7 @@ class _HomePagesState extends State<HomePages> {
             //     banners: [listImgSlider.toString()],
             //   ),
             // ),
-            const SizedBox(height: 20),
+            //const SizedBox(height: 20),
             Container(
               //color: Colors.cyan,
               margin: const EdgeInsets.only(top: 20),
@@ -446,17 +503,15 @@ class _HomePagesState extends State<HomePages> {
                               children: [
                                 const SizedBox(width: 10),
                                 WMenuKategori(
-                                  title: 'Our Package',
-                                  icon: 'assets/icons/box1.png',
-                                  onPressed: () {
-                                    print("product");
-                                  },
-                                ),
-                                const SizedBox(width: 10),
-                                WMenuKategori(
                                   title: 'Team',
                                   icon: 'assets/icons/developers.png',
                                   onPressed: () {
+                                    Navigator.of(context).push(
+                                      CupertinoPageRoute(
+                                        builder: (context) =>
+                                            const MemberTeam(),
+                                      ),
+                                    );
                                     print("Team");
                                   },
                                 ),
@@ -470,10 +525,16 @@ class _HomePagesState extends State<HomePages> {
                                 ),
                                 const SizedBox(width: 10),
                                 WMenuKategori(
-                                  title: 'About me',
+                                  title: 'About as',
                                   icon: 'assets/icons/letter-i.png',
                                   onPressed: () {
-                                    print("Documentasi");
+                                    Navigator.of(context).push(
+                                      CupertinoPageRoute(
+                                        builder: (context) =>
+                                            const AbaoutAsPage(),
+                                      ),
+                                    );
+                                    print("Abaout As");
                                   },
                                 ),
                                 const SizedBox(width: 10),
@@ -496,100 +557,93 @@ class _HomePagesState extends State<HomePages> {
                 title: "Article",
                 showActionButton: true,
                 onPressed: () {
+                  Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (context) => const ArticleDiscover()));
                   print("test");
                 },
               ),
             ),
             const SizedBox(height: 20),
-            ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
+            SizedBox(
+              height: 250,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
                 itemCount: listArticle.length,
                 itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () async {
-                      await Navigator.of(context).push(CupertinoPageRoute(
-                          builder: (context) => const ArticleHomePages()));
-                      print("object pages");
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: shadow,
-                                blurRadius: 5.0,
-                              )
-                            ]),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.network(
-                                  listArticle[index]['image'],
-                                  width: 120,
-                                  height: 120,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      listArticle[index]['title'],
-                                      style: const TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      listArticle[index]['text']!,
-                                      style: const TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w700),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    margin: const EdgeInsets.only(right: 10),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(CupertinoPageRoute(
+                            builder: (context) => const PagesArticle()));
+                        print("Cek Article");
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ImagesContainer(
+                            width: 120,
+                            height: 120,
+                            imageUrl: listArticle[index]['image'].toString(),
+                            borderRadius: 15,
                           ),
-                        ),
+                          const SizedBox(height: 5),
+                          Text(
+                            listArticle[index]['title'].toString(),
+                            style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            listArticle[index]['text'].toString(),
+                            style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey[700]),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.justify,
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Text(
+                                listArticle[index]['date'].toString(),
+                                style: const TextStyle(
+                                    fontSize: 8, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(width: 5),
+                            ],
+                          )
+                        ],
                       ),
                     ),
                   );
-                }),
-            const SizedBox(height: 20),
-            Container(
-              color: Colors.amber,
-              width: double.infinity,
-              height: 200,
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height - 200,
-              child: Column(
-                children: [
-                  Container(
-                    color: Colors.blue,
-                  )
-                ],
+                },
               ),
             ),
+            const SizedBox(height: 30),
+            // Container(
+            //   color: Colors.amber,
+            //   width: double.infinity,
+            //   height: 200,
+            // ),
+            // SizedBox(
+            //   height: MediaQuery.of(context).size.height - 200,
+            //   child: Column(
+            //     children: [
+            //       Container(
+            //         color: Colors.blue,
+            //       )
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -601,7 +655,7 @@ class _HomePagesState extends State<HomePages> {
         effect: const ExpandingDotsEffect(
             dotWidth: 15, activeDotColor: headerBackground),
         activeIndex: activeIndex,
-        count: urlImages.length,
+        count: listImgSlider.length,
       );
 
   void animateToSlide(int index) => controller.animateToPage(index);

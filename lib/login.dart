@@ -77,10 +77,10 @@ class _LoginState extends State<Login> {
         if (response.statusCode == 200) {
           final Map<String, dynamic> responseJson =
               json.decode(response.body.toString());
-          print(responseJson);
+          // print(responseJson);
           var token = responseJson["content"]["token"].toString();
           tokenGk(responseJson);
-          print(token); // Assuming the API response returns the token
+          // print(token); // Assuming the API response returns the token
           final authorizedHeaders = {
             'Content-Type': 'application/json',
             'X-auth-token': token,
@@ -89,15 +89,15 @@ class _LoginState extends State<Login> {
               'https://api.rsnaturopaty.com/customer/decode_token';
           final apiResponse =
               await http.get(Uri.parse(DecodeUrl), headers: authorizedHeaders);
-          print('API Response: ${apiResponse.statusCode}');
-          print('API Response Body: ${apiResponse.body}');
+          // print('API Response: ${apiResponse.statusCode}');
+          // print('API Response Body: ${apiResponse.body}');
           final Map<String, dynamic> getContent =
               jsonDecode(apiResponse.body.toString());
           dataLoginToSP(getContent['content']);
         } else if (response.statusCode == 300) {
           final Map<String, dynamic> responseJson =
               jsonDecode(response.body.toString());
-          print(responseJson);
+          // print(responseJson);
           // Simpan data responsenya ke dalam SharedPreferences
           dataRegistrasiToSP(responseJson["content"]);
         } else if (response.statusCode == 401) {
@@ -105,21 +105,21 @@ class _LoginState extends State<Login> {
           String errorMessage = errorJson["error"];
           CustomDialog().warning(context, '', errorMessage);
           //Login failed due to unauthorized access.
-          print('Login failed: Unauthorized access');
+          //  print('Login failed: Unauthorized access');
           // Login failed. Display the response status code.
-          print('Login failed with status code: ${response.statusCode}');
+          //  print('Login failed with status code: ${response.statusCode}');
         } else if (response.statusCode == 404) {
           final Map<String, dynamic> errorJson = json.decode(response.body);
           String errorMessage = errorJson["error"];
           // ignore: use_build_context_synchronously
           CustomDialog().warning(context, '', errorMessage);
-          print('Login failed: $errorMessage');
-          print('Login failed with status code: ${response.statusCode}');
+          //  print('Login failed: $errorMessage');
+          //  print('Login failed with status code: ${response.statusCode}');
         } else {
           hideLoading();
           CustomDialog()
               .warning(context, '', 'Error: ${response.reasonPhrase}');
-          print('Login failed with status code: ${response.statusCode}');
+          //  print('Login failed with status code: ${response.statusCode}');
         }
       } catch (e) {
         hideLoading();
@@ -156,15 +156,15 @@ class _LoginState extends State<Login> {
   dataLoginToSP(var data) async {
     final sp = await SharedPreferences.getInstance();
 
-    print("----================--------");
-    print("Data Reg");
-    //print(data['userid']);
-    print(data['name']);
-    print(data['username'].toString());
-    print(data['phone'].toString());
-    print(data['log'].toString());
-    print(data['status'].toString());
-    print("----================--------");
+    // print("----================--------");
+    // print("Data Reg");
+    // //print(data['userid']);
+    // print(data['name']);
+    // print(data['username'].toString());
+    // print(data['phone'].toString());
+    // print(data['log'].toString());
+    // print(data['status'].toString());
+    // print("----================--------");
 
     sp.setString('userId', data['userid'].toString());
     sp.setString('name', data['name'].toString());
@@ -191,6 +191,18 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => const NavCustomButton(),
+              ),
+            );
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),

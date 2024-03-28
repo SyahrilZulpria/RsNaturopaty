@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:rsnaturopaty/widget/utils/ImagesContainer.dart';
 
 class ArticleHomePages extends StatelessWidget {
   const ArticleHomePages({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ImageContainer(
+    return ImagesContainer(
       width: double.infinity,
       imageUrl: 'assets/images/Indonesia_map.png',
       child: Scaffold(
@@ -27,8 +28,6 @@ class ArticleHomePages extends StatelessWidget {
             const _NewsHeadline(
               category: 'testing1',
               title: 'Naskah Lorem Ipsum standar ',
-              text:
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
             ),
             Container(
               padding: const EdgeInsets.all(20),
@@ -38,42 +37,18 @@ class ArticleHomePages extends StatelessWidget {
                     topRight: Radius.circular(20),
                   ),
                   color: Colors.white),
-              child: Column(
+              child: const Column(
                 children: [
-                  Row(
-                    children: [
-                      const CustomTag(
-                        backgroundColor: Colors.black,
-                        children: [
-                          CircleAvatar(
-                            radius: 10,
-                            backgroundImage:
-                                NetworkImage('/assets/nophoto.jpg'),
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            "Publisher Article",
-                            style: TextStyle(color: Colors.white),
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      CustomTag(
-                        backgroundColor: Colors.grey.shade200,
-                        children: const [
-                          Icon(Icons.timer, color: Colors.grey),
-                          SizedBox(width: 10),
-                          Text(
-                            "8h",
-                            style: TextStyle(color: Colors.black),
-                          )
-                        ],
-                      ),
-                    ],
+                  SizedBox(height: 20),
+                  Text(
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 10),
+                  Text(
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
+                  ),
                 ],
               ),
             )
@@ -89,12 +64,10 @@ class _NewsHeadline extends StatelessWidget {
     super.key,
     required this.category,
     required this.title,
-    required this.text,
   });
 
   final String category;
   final String title;
-  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -124,58 +97,11 @@ class _NewsHeadline extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
-                  height: 1.25,
+                  // height: 1.25,
                 ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            text,
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium!
-                .copyWith(color: Colors.white),
           ),
         ],
       ),
-    );
-  }
-}
-
-class ImageContainer extends StatelessWidget {
-  const ImageContainer({
-    super.key,
-    this.height = 125,
-    this.borderRadius = 20,
-    required this.width,
-    required this.imageUrl,
-    this.padding,
-    this.margin,
-    this.child,
-  });
-
-  final double width;
-  final double height;
-  final String imageUrl;
-  final EdgeInsets? padding;
-  final EdgeInsets? margin;
-  final double borderRadius;
-  final Widget? child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      width: width,
-      margin: margin,
-      padding: padding,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: child,
     );
   }
 }

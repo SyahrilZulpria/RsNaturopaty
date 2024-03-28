@@ -15,6 +15,7 @@ const colorPrimary2 = Color(0xFF2697FF);
 const secondaryColor = Color(0xFF2A2D3E);
 const bgColor = Color(0xFF212332);
 const defaultPadding = 16.0;
+const decColors = Color(0xFFD9D9D9);
 
 //Text Colors
 const Color textPrimary = Color(0xFF333333);
@@ -36,7 +37,7 @@ Color info = const Color(0xFF1976D2);
 // Natural Shades
 Color Black = const Color(0xFF232323);
 Color darkerGrey = const Color(0xFF4F4F4F);
-Color darkGrey = const Color(0xFF939393);
+const Color darkGrey = Color(0xFF939393);
 Color dark = const Color(0xFF272727);
 Color darkContainer = Colors.white.withOpacity(0.1);
 

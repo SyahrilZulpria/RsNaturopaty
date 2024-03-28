@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 // import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rsnaturopaty/login.dart';
 // import 'package:rsnaturopaty/login.dart';
 // import 'package:rsnaturopaty/screen/LoadingPages.dart';
 // import 'package:rsnaturopaty/screen/Home/home_pages.dart';
@@ -19,27 +19,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // Widget page = const LoadingPage();
-  //final storage = const FlutterSecureStorage();
-  @override
-  // void initState() {
-  //   super.initState();
-  //   checkLogin();
-  // }
-
-  // void checkLogin() async {
-  //   String? token = await storage.read(key: "token");
-  //   if (token != null) {
-  //     setState(() {
-  //       page = const NavCustomButton();
-  //     });
-  //   } else {
-  //     setState(() {
-  //       page = const Login();
-  //     });
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -52,8 +31,9 @@ class _MyAppState extends State<MyApp> {
           Theme.of(context).textTheme,
         ),
       ),
-      home: const Login(),
-      // const NavCustomButton(),
+      home:
+          //const Login(),
+          const NavCustomButton(),
     );
   }
 }

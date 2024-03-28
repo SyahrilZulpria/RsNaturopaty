@@ -28,10 +28,27 @@ class Endpoint {
   /// API POS
 
   /// API ORDER
+  static String createdSalesAdd = '${ip}sales/add';
+  static String salesAddItem =
+      '${ip}sales/add_item/'; //get by : id dari sales add
+  static String salesUpdate = '${ip}sales/update/'; //get by : id dari sales add
+  static String checkoutProduct =
+      '${ip}sales/checkout/'; //get by : id dari sales add
+  static String getPaymentType = '${ip}payment';
+  static String getTransactionDetail =
+      '${ip}sales/get/'; //get by : id transction
+  static String getHistoryTransaction = '${ip}sales';
 
   /// API REDEEM
 
+  /// API Notification
+  static String getNotification = '${ip}customer/notif';
+  static String getDetailNotification = '${ip}customer/notif_detail/'; // by id
+
   /// API Product
+  static String getProductList = '${ip}product';
+  static String getProductDetail =
+      '${ip}product/get/'; // get by TRISS01/1 kode product
 
   /// API ImageSlider
   static String imgSlider = '${ip}slider';

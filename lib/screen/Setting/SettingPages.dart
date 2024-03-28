@@ -4,7 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:rsnaturopaty/login.dart';
+import 'package:rsnaturopaty/screen/Product/history_transaction.dart';
 import 'package:rsnaturopaty/screen/Setting/profile/profile_pages.dart';
+import 'package:rsnaturopaty/screen/Setting/wallet_poiny/history_point.dart';
+import 'package:rsnaturopaty/screen/Setting/wallet_poiny/history_wallet.dart';
 import 'package:rsnaturopaty/widget/button_widget/IconSettingPages.dart';
 import 'package:rsnaturopaty/widget/utils/Colors.dart';
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
@@ -47,10 +50,38 @@ class _SettingPagesState extends State<SettingPages> {
       noPhone = sp.getString("noPhone")!;
       log = sp.getString("log")!;
     });
+    //decodeToken();
     saldoDompet();
     saldoPoint();
     getDataCustomer();
   }
+
+  // decodeToken() async {
+  //   print("--- Page Setting ----");
+  //   print(Endpoint.decodeToken);
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(Endpoint.decodeToken),
+  //       headers: <String, String>{
+  //         'Content-Type': 'application/json',
+  //         'X-auth-token': token,
+  //       },
+  //     ).timeout(const Duration(seconds: 60));
+
+  //     if (response.statusCode != 200) {
+  //       print("gagal login : ${response.statusCode}");
+  //       Navigator.of(context)
+  //           .push(MaterialPageRoute(builder: (context) => const Login()));
+  //       // final Map<String, dynamic> responseJson =
+  //       //     json.decode(response.body.toString());
+  //       // print(responseJson);
+  //     } else {
+  //       print("Suksess Login: ${response.statusCode}");
+  //     }
+  //   } catch (e) {
+  //     CustomDialog().warning(context, '', e.toString());
+  //   }
+  // }
 
   getDataCustomer() async {
     try {
@@ -60,17 +91,17 @@ class _SettingPagesState extends State<SettingPages> {
         'X-auth-token': token,
       }).timeout(const Duration(seconds: 60));
       if (response.statusCode == 200) {
-        print('status code: ${response.statusCode}');
+        // print('status code: ${response.statusCode}');
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
 
         final Map<String, dynamic> dataCustomer = responseJson['content'];
-        print(dataCustomer);
+        // print(dataCustomer);
         setState(() {
           listCustomer = [dataCustomer];
         });
-        print("============Hasil Get data listCustomer===========");
-        print(listCustomer);
+        // print("============Hasil Get data listCustomer===========");
+        // print(listCustomer);
       } else {
         CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
         print('Login failed with status code: ${response.statusCode}');
@@ -95,16 +126,19 @@ class _SettingPagesState extends State<SettingPages> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
-        print(responseJson);
+        //  print(responseJson);
         //List<dynamic> dataDompet = responseJson['content'];
         final Map<String, dynamic> content = responseJson['content'];
         final int balance = content['balance'];
         setState(() {
           listDompet = [balance.toString()];
         });
-        print("============Hasil Get data===========");
-        print(listDompet);
-        print("========================");
+        //  print("============Hasil Get data===========");
+        //  print(listDompet);
+        //  print("========================");
+      } else if (response.statusCode == 401) {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => const Login()));
       } else {
         CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
         print('Login failed with status code: ${response.statusCode}');
@@ -129,16 +163,16 @@ class _SettingPagesState extends State<SettingPages> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
-        print(responseJson);
+        //  print(responseJson);
         //List<dynamic> dataDompet = responseJson['content'];
         final Map<String, dynamic> content = responseJson['content'];
         final int balance = content['balance'];
         setState(() {
           listPoint = [balance.toString()];
         });
-        print("============Hasil Get data===========");
-        print(listPoint);
-        print("========================");
+        //  print("============Hasil Get data===========");
+        //  print(listPoint);
+        //  print("========================");
       } else {
         CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
         print('Login failed with status code: ${response.statusCode}');
@@ -160,6 +194,8 @@ class _SettingPagesState extends State<SettingPages> {
       ).timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 200) {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
         print(responseJson);
@@ -176,7 +212,7 @@ class _SettingPagesState extends State<SettingPages> {
         print('Logout failed: $errorMessage');
         print('Logout failed with status code: ${response.statusCode}');
       } else {
-        CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
+        //CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
         print('Logout failed with status code: ${response.statusCode}');
       }
     } catch (e) {
@@ -219,12 +255,6 @@ class _SettingPagesState extends State<SettingPages> {
                     top: 20, bottom: 15, right: 20, left: 20),
                 child: Column(
                   children: [
-                    // const Row(
-                    //   mainAxisAlignment: MainAxisAlignment.end,
-                    //   children: [
-                    //     Icon(Icons.more_vert),
-                    //   ],
-                    // ),
                     Column(
                       children: [
                         Container(
@@ -283,8 +313,8 @@ class _SettingPagesState extends State<SettingPages> {
                             const SizedBox(height: 5),
                             Text(
                               listDompet.isNotEmpty
-                                  ? "Rp ${listDompet.first}"
-                                  : "Rp 0",
+                                  ? "${listDompet.first}"
+                                  : " 0",
                               style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
@@ -310,7 +340,7 @@ class _SettingPagesState extends State<SettingPages> {
                             Row(
                               children: [
                                 Image.asset(
-                                  "assets/icons/reward.png", // Ganti dengan path gambar poin Anda
+                                  "assets/icons/reward.png",
                                   width: 20,
                                   height: 20,
                                 ),
@@ -370,7 +400,20 @@ class _SettingPagesState extends State<SettingPages> {
                           color: Colors.amber,
                           icon: CupertinoIcons.up_arrow,
                           onTap: () {
-                            print("Recharge");
+                            if (listCustomer.isNotEmpty &&
+                                listCustomer[0]['image'] != null) {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const HistoryWallet(),
+                                ),
+                              );
+                            } else {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Login(),
+                                ),
+                              );
+                            }
                           },
                         ),
                         WIconSetting(
@@ -378,15 +421,42 @@ class _SettingPagesState extends State<SettingPages> {
                           color: Colors.blue,
                           icon: CupertinoIcons.doc_text_search,
                           onTap: () {
-                            print("Funding Detail");
+                            if (listCustomer.isNotEmpty &&
+                                listCustomer[0]['image'] != null) {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const HistoryPoint(),
+                                ),
+                              );
+                            } else {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Login(),
+                                ),
+                              );
+                            }
                           },
                         ),
                         WIconSetting(
-                          title: "Order Hisory",
+                          title: "History Transaction",
                           color: Colors.blue,
                           icon: CupertinoIcons.doc_checkmark,
                           onTap: () {
-                            print("Order Hisory");
+                            if (listCustomer.isNotEmpty &&
+                                listCustomer[0]['image'] != null) {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) =>
+                                      const HistoryTransaction(),
+                                ),
+                              );
+                            } else {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Login(),
+                                ),
+                              );
+                            }
                           },
                         ),
                       ],
@@ -408,14 +478,32 @@ class _SettingPagesState extends State<SettingPages> {
                           title: "Team Report",
                           color: Colors.green,
                           icon: CupertinoIcons.person_3_fill,
-                          onTap: () {},
+                          onTap: () {
+                            if (listCustomer.isNotEmpty &&
+                                listCustomer[0]['image'] != null) {
+                            } else {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Login(),
+                                ),
+                              );
+                            }
+                          },
                         ),
                         WIconSetting(
                           title: "Invite Friends",
                           color: Colors.orange,
                           icon: CupertinoIcons.person_add_solid,
                           onTap: () {
-                            print("Invite Friends");
+                            if (listCustomer.isNotEmpty &&
+                                listCustomer[0]['image'] != null) {
+                            } else {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Login(),
+                                ),
+                              );
+                            }
                           },
                         ),
                       ],
@@ -438,32 +526,70 @@ class _SettingPagesState extends State<SettingPages> {
                           color: Colors.grey,
                           icon: CupertinoIcons.person_alt_circle_fill,
                           onTap: () {
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (context) => const ProfilePage(),
-                              ),
-                            );
-                            print("my Account");
+                            if (listCustomer.isNotEmpty &&
+                                listCustomer[0]['image'] != null) {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const ProfilePage(),
+                                ),
+                              );
+                            } else {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Login(),
+                                ),
+                              );
+                            }
                           },
                         ),
                         WIconSetting(
                           title: "Bank Account",
                           color: Colors.brown,
                           icon: Icons.account_balance,
-                          onTap: () {},
+                          onTap: () {
+                            if (listCustomer.isNotEmpty &&
+                                listCustomer[0]['image'] != null) {
+                            } else {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Login(),
+                                ),
+                              );
+                            }
+                          },
                         ),
                         WIconSetting(
                           title: "Contact Information",
                           color: Colors.cyan,
                           icon: CupertinoIcons.phone_circle_fill,
-                          onTap: () {},
+                          onTap: () {
+                            if (listCustomer.isNotEmpty &&
+                                listCustomer[0]['image'] != null) {
+                            } else {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Login(),
+                                ),
+                              );
+                            }
+                          },
                         ),
                         WIconSetting(
-                          title: "LogOut",
-                          color: Colors.red,
-                          icon: CupertinoIcons.ellipsis_vertical_circle_fill,
-                          onTap: () => alertLogout(context),
-                        )
+                            title: "LogOut",
+                            color: Colors.red,
+                            icon: CupertinoIcons.ellipsis_vertical_circle_fill,
+                            onTap: () {
+                              if (listCustomer.isNotEmpty &&
+                                  listCustomer[0]['image'] != null) {
+                                alertLogout(context);
+                              } else {
+                                Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                    builder: (context) => const Login(),
+                                  ),
+                                );
+                              }
+                            })
                       ],
                     ),
                   ],
@@ -478,10 +604,9 @@ class _SettingPagesState extends State<SettingPages> {
 
   void alertLogout(BuildContext context) {
     showDialog(
-      barrierDismissible: true, // JUST MENTION THIS LINE
+      barrierDismissible: true,
       context: context,
       builder: (BuildContext context) {
-        // return object of type Dialog
         return CupertinoAlertDialog(
           title: const Text("Yakin ingin keluar?",
               style: TextStyle(
