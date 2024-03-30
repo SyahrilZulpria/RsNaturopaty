@@ -23,7 +23,7 @@ class Endpoint {
   static String categoryArticle = '${ip}article';
   static String getArticleCategory = '${ip}article/get_category';
   static String getArticlePermalink =
-      '${ip}article/get_by_permalink/promo1'; //by : Promo1
+      '${ip}article/get_by_permalink/'; //by : Promo1
 
   /// API POS
 

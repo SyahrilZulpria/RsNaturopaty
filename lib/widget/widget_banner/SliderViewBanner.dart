@@ -18,12 +18,20 @@ class SlideViewBanner extends StatelessWidget {
     final controller = Get.put(HomeController());
     return Column(
       children: [
-        CarouselSlider(
+        CarouselSlider.builder(
           options: CarouselOptions(
-              viewportFraction: 1,
-              onPageChanged: (index, _) =>
-                  controller.updatePageIndicator(index)),
-          items: banners.map((url) => ViewBanner(imageUrl: url)).toList(),
+            viewportFraction: 1,
+            onPageChanged: (index, _) => controller.updatePageIndicator(index),
+            //autoplay: true, // Tambahkan opsi autoplay di sini
+            autoPlayInterval: const Duration(seconds: 4),
+          ),
+
+          itemCount: banners.length,
+          itemBuilder: (context, index, realIndex) {
+            final imageUrl = banners[index];
+            return ViewBanner(imageUrl: imageUrl);
+          },
+          //items: banners.map((url) => ViewBanner(imageUrl: url)).toList(),
         ),
         const SizedBox(height: 10),
         Obx(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rsnaturopaty/widget/utils/Colors.dart';
 
 class AddMembers extends StatefulWidget {
@@ -11,7 +12,7 @@ class AddMembers extends StatefulWidget {
 class _AddMembersState extends State<AddMembers> {
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    // var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purple,
@@ -80,6 +81,7 @@ class _AddMembersState extends State<AddMembers> {
                                 ),
                               ],
                             ),
+                            textAlign: TextAlign.justify,
                           ),
                           const SizedBox(height: 10),
                           const Text.rich(
@@ -103,6 +105,7 @@ class _AddMembersState extends State<AddMembers> {
                                 ),
                               ],
                             ),
+                            textAlign: TextAlign.justify,
                           ),
                           const SizedBox(height: 10),
                           const Text.rich(
@@ -126,231 +129,18 @@ class _AddMembersState extends State<AddMembers> {
                                 ),
                               ],
                             ),
+                            textAlign: TextAlign.justify,
                           ),
                           const SizedBox(height: 80),
-                          Stack(
-                            children: [
-                              TextFormField(
-                                readOnly: true,
-                                style: const TextStyle(fontSize: 16.0),
-                                decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.only(
-                                      top: 15, left: 15, right: 80),
-                                  labelText: 'Kode Undangan',
-                                  labelStyle:
-                                      const TextStyle(color: Colors.black),
-                                  filled: true,
-                                  fillColor: formColor,
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide:
-                                          BorderSide(color: formBorder)),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide:
-                                          BorderSide(color: formBorder)),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide:
-                                          BorderSide(color: formBorder)),
-                                  prefixIcon: const Icon(
-                                    Icons.person_outline,
-                                    color: Colors.black26,
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 5,
-                                top: 5,
-                                right: 0,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      print("Link code");
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors
-                                          .green, // Ubah warna latar belakang menjadi biru
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(50),
-                                            bottomLeft: Radius.circular(
-                                                50)), // Ubah bentuk tombol
-                                      ),
-                                    ),
-                                    child: const Text(
-                                      'Copy Code',
-                                      style: TextStyle(color: Colors.black),
-                                    )),
-                              ),
-                            ],
-                          ),
+                          const SizedBox(height: 80),
+                          _buildCopyButton('534GGHFE3', '534GGHFE3'),
                           const SizedBox(height: 10),
-                          Stack(
-                            children: [
-                              TextFormField(
-                                readOnly: true,
-                                //controller: otpController,
-                                style: const TextStyle(fontSize: 16.0),
-
-                                decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.only(
-                                      top: 15, left: 15, right: 80),
-                                  labelText: 'http://m.rsnaturopaty.com',
-                                  labelStyle:
-                                      const TextStyle(color: Colors.black),
-                                  filled: true,
-                                  fillColor: formColor,
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide:
-                                          BorderSide(color: formBorder)),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide:
-                                          BorderSide(color: formBorder)),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide:
-                                          BorderSide(color: formBorder)),
-                                  prefixIcon: const Icon(
-                                    Icons.person_outline,
-                                    color: Colors.black26,
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 5,
-                                top: 5,
-                                right: 0,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      print("Link code");
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors
-                                          .green, // Ubah warna latar belakang menjadi biru
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(50),
-                                            bottomLeft: Radius.circular(
-                                                50)), // Ubah bentuk tombol
-                                      ),
-                                    ),
-                                    child: const Text(
-                                      'Copy Link',
-                                      style: TextStyle(color: Colors.black),
-                                    )),
-                              ),
-                            ],
-                          ),
+                          _buildCopyButton('http://m.rsnaturopaty.com',
+                              'http://m.rsnaturopaty.com'),
                         ],
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Container(height: 3, color: Colors.grey[300]),
-                    const SizedBox(height: 10),
-                    const Row(
-                      children: [
-                        Text(
-                          "Team Overview",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        Spacer()
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Column(
-                      children: [
-                        Container(
-                          width: 100,
-                          height: 100,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                image:
-                                    AssetImage("assets/images/manage_user.png"),
-                                fit: BoxFit.cover),
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        SizedBox(
-                          width: (size.width - 20) * 0.6,
-                          child: const Column(
-                            children: [
-                              Text(
-                                "Number of registered team accounts",
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
-                                maxLines: 2,
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(height: 5),
-                              Text(
-                                "0",
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    const Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Text(
-                                "Number of Members who purchased RS`N products today",
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.black),
-                                maxLines: 2,
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(height: 5),
-                              Text(
-                                "0",
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.black),
-                              )
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Text(
-                                "Total Number of Members who have purchased RS`N products",
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.black),
-                                maxLines: 2,
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(height: 5),
-                              Text(
-                                "0",
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.black),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    )
                   ],
                 ),
               ),
@@ -359,5 +149,74 @@ class _AddMembersState extends State<AddMembers> {
         ),
       ),
     );
+  }
+
+  Widget _buildCopyButton(String text, String hintText) {
+    return Stack(
+      children: [
+        TextFormField(
+          enabled: false,
+          style: const TextStyle(fontSize: 16.0),
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.only(
+              top: 15,
+              left: 15,
+              right: 80,
+            ),
+            labelText: text,
+            labelStyle: const TextStyle(color: Colors.black),
+            filled: true,
+            fillColor: formColor,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: formBorder),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: formBorder),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: formBorder),
+            ),
+            prefixIcon: const Icon(
+              Icons.person_outline,
+              color: Colors.black26,
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 5,
+          top: 5,
+          right: 0,
+          child: ElevatedButton(
+            onPressed: () {
+              _copyToClipboard(text, hintText);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  bottomLeft: Radius.circular(50),
+                ),
+              ),
+            ),
+            child: const Text(
+              'Copy',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _copyToClipboard(String text, String hintText) {
+    Clipboard.setData(ClipboardData(text: hintText));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('$text copied to clipboard'),
+      duration: const Duration(seconds: 2),
+    ));
   }
 }

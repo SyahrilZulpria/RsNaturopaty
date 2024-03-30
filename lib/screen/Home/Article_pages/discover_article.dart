@@ -1,7 +1,8 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
-import 'package:rsnaturopaty/screen/Home/Article_pages/article_pages.dart';
+import 'package:rsnaturopaty/screen/Home/Article_pages/pages_article.dart';
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:rsnaturopaty/widget/utils/ImagesContainer.dart';
@@ -184,7 +185,15 @@ class _CategoryArticleState extends State<CategoryArticle> {
                         final articleData = widget.itemArticle[index];
                         return InkWell(
                           onTap: () {
-                            print("Open Article");
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (context) => PagesArticle(
+                                  permaLink:
+                                      articleData['permalink'].toString(),
+                                ),
+                              ),
+                            );
+                            print("Open Article In Discover");
                           },
                           child: Row(
                             children: [
@@ -236,76 +245,6 @@ class _CategoryArticleState extends State<CategoryArticle> {
                   child: CircularProgressIndicator(),
                 ),
         )
-        //       ? TabBarView(
-        //           children: widget.itemArticle
-        //               .map(
-        //                 (tab) => ListView.builder(
-        //                   shrinkWrap: true,
-        //                   itemCount: widget.itemArticle.length,
-        //                   itemBuilder: ((context, index) {
-        //                     final articleData = widget.itemArticle[index];
-        //                     return InkWell(
-        //                       onTap: () {
-        //                         // Navigator.pushNamed(
-        //                         //   context,
-        //                         //   ArticleScreen.routeName,
-        //                         //   arguments: articles[index],
-        //                         // );
-        //                       },
-        //                       child: Row(
-        //                         children: [
-        //                           ImageContainer(
-        //                             width: 80,
-        //                             height: 80,
-        //                             margin: const EdgeInsets.all(10.0),
-        //                             borderRadius: 5,
-        //                             imageUrl: articleData['image'],
-        //                           ),
-        //                           Expanded(
-        //                             child: Column(
-        //                               crossAxisAlignment:
-        //                                   CrossAxisAlignment.start,
-        //                               mainAxisAlignment:
-        //                                   MainAxisAlignment.center,
-        //                               children: [
-        //                                 Text(
-        //                                   articleData['name'],
-        //                                   maxLines: 2,
-        //                                   overflow: TextOverflow.clip,
-        //                                   style: const TextStyle(
-        //                                       fontSize: 18,
-        //                                       fontWeight: FontWeight.bold),
-        //                                 ),
-        //                                 const SizedBox(height: 10),
-        //                                 Row(
-        //                                   children: [
-        //                                     const Icon(
-        //                                       Icons.calendar_month_outlined,
-        //                                       size: 15,
-        //                                     ),
-        //                                     const SizedBox(width: 5),
-        //                                     Text(
-        //                                       articleData['date'],
-        //                                       style:
-        //                                           const TextStyle(fontSize: 12),
-        //                                     ),
-        //                                   ],
-        //                                 ),
-        //                               ],
-        //                             ),
-        //                           ),
-        //                         ],
-        //                       ),
-        //                     );
-        //                   }),
-        //                 ),
-        //               )
-        //               .toList(),
-        //         )
-        //       : const Center(
-        //           child: CircularProgressIndicator(),
-        //         ),
-        // )
       ],
     );
   }

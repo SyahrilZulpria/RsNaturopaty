@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rsnaturopaty/widget/utils/ImagesContainer.dart';
 
-class ArticleHomePages extends StatelessWidget {
-  const ArticleHomePages({super.key});
+class ArticlePages extends StatefulWidget {
+  const ArticlePages({super.key});
 
+  @override
+  State<ArticlePages> createState() => _ArticlePagesState();
+}
+
+class _ArticlePagesState extends State<ArticlePages> {
   @override
   Widget build(BuildContext context) {
     return ImagesContainer(

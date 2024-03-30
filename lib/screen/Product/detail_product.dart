@@ -65,6 +65,48 @@ class _ProductDetailPagesState extends State<ProductDetailPages> {
     getTransactionDetail();
   }
 
+  salesAdd() async {
+    print("Sales Add");
+    print(Endpoint.createdSalesAdd);
+    try {
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse(Endpoint.createdSalesAdd),
+      );
+      request.headers['X-auth-token'] = token;
+      request.fields['ccash'] = '0';
+      final response = await request.send();
+      final responseData = await response.stream.transform(utf8.decoder).join();
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseJson = json.decode(responseData);
+        Map<String, dynamic> content = responseJson['content'];
+        salesId = content['id'].toString();
+        print("Sales ID: $salesId");
+
+        await salesAddItem();
+        // Update visibility
+        setState(() {
+          showBuyButton = false;
+          showPaymentSelection = true;
+        });
+      } else if (response.statusCode == 400) {
+        final Map<String, dynamic> errorJson = json.decode(responseData);
+        String errorMessage = errorJson["error"];
+        CustomDialog().warning(context, '', errorMessage);
+      } else if (response.statusCode == 401) {
+        Navigator.of(context).push(
+          CupertinoPageRoute(
+            builder: (context) => const Login(),
+          ),
+        );
+      } else {
+        print("Error salesAdd status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      CustomDialog().warning(context, '', e.toString());
+    }
+  }
+
   getProductDetail() async {
     print("=========== Get Product ============");
     print('${Endpoint.getProductDetail}${widget.kodeProduct}/${widget.reg_id}');
@@ -115,48 +157,6 @@ class _ProductDetailPagesState extends State<ProductDetailPages> {
         print(transactionData);
       } else {
         print("Error getTransactionDetail status code: ${response.statusCode}");
-      }
-    } catch (e) {
-      CustomDialog().warning(context, '', e.toString());
-    }
-  }
-
-  salesAdd() async {
-    print("Sales Add");
-    print(Endpoint.createdSalesAdd);
-    try {
-      final request = http.MultipartRequest(
-        'POST',
-        Uri.parse(Endpoint.createdSalesAdd),
-      );
-      request.headers['X-auth-token'] = token;
-      request.fields['ccash'] = '0';
-      final response = await request.send();
-      final responseData = await response.stream.transform(utf8.decoder).join();
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseJson = json.decode(responseData);
-        Map<String, dynamic> content = responseJson['content'];
-        salesId = content['id'].toString();
-        print("Sales ID: $salesId");
-
-        await salesAddItem();
-        // Update visibility
-        setState(() {
-          showBuyButton = false;
-          showPaymentSelection = true;
-        });
-      } else if (response.statusCode == 400) {
-        final Map<String, dynamic> errorJson = json.decode(responseData);
-        String errorMessage = errorJson["error"];
-        CustomDialog().warning(context, '', errorMessage);
-      } else if (response.statusCode == 401) {
-        Navigator.of(context).push(
-          CupertinoPageRoute(
-            builder: (context) => const Login(),
-          ),
-        );
-      } else {
-        print("Error salesAdd status code: ${response.statusCode}");
       }
     } catch (e) {
       CustomDialog().warning(context, '', e.toString());

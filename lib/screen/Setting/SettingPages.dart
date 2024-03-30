@@ -6,8 +6,9 @@ import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:rsnaturopaty/login.dart';
 import 'package:rsnaturopaty/screen/Product/history_transaction.dart';
 import 'package:rsnaturopaty/screen/Setting/profile/profile_pages.dart';
-import 'package:rsnaturopaty/screen/Setting/wallet_poiny/history_point.dart';
-import 'package:rsnaturopaty/screen/Setting/wallet_poiny/history_wallet.dart';
+import 'package:rsnaturopaty/screen/pages_404.dart';
+//import 'package:rsnaturopaty/screen/Setting/wallet_poiny/history_point.dart';
+//import 'package:rsnaturopaty/screen/Setting/wallet_poiny/history_wallet.dart';
 import 'package:rsnaturopaty/widget/button_widget/IconSettingPages.dart';
 import 'package:rsnaturopaty/widget/utils/Colors.dart';
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
@@ -103,11 +104,11 @@ class _SettingPagesState extends State<SettingPages> {
         // print("============Hasil Get data listCustomer===========");
         // print(listCustomer);
       } else {
-        CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
+        //CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
         print('Login failed with status code: ${response.statusCode}');
       }
     } catch (e) {
-      CustomDialog().warning(context, '', e.toString());
+      //CustomDialog().warning(context, '', e.toString());
     }
   }
 
@@ -136,15 +137,12 @@ class _SettingPagesState extends State<SettingPages> {
         //  print("============Hasil Get data===========");
         //  print(listDompet);
         //  print("========================");
-      } else if (response.statusCode == 401) {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const Login()));
       } else {
-        CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
+        //CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
         print('Login failed with status code: ${response.statusCode}');
       }
     } catch (e) {
-      CustomDialog().warning(context, '', e.toString());
+      //CustomDialog().warning(context, '', e.toString());
     }
   }
 
@@ -174,11 +172,11 @@ class _SettingPagesState extends State<SettingPages> {
         //  print(listPoint);
         //  print("========================");
       } else {
-        CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
+        //CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
         print('Login failed with status code: ${response.statusCode}');
       }
     } catch (e) {
-      CustomDialog().warning(context, '', e.toString());
+      //CustomDialog().warning(context, '', e.toString());
     }
   }
 
@@ -385,85 +383,63 @@ class _SettingPagesState extends State<SettingPages> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "My Account",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const Divider(
-                      color: Colors.black,
-                    ),
-                    const SizedBox(height: 10),
-                    Column(
-                      children: [
-                        WIconSetting(
-                          title: "Recharge",
-                          color: Colors.amber,
-                          icon: CupertinoIcons.up_arrow,
-                          onTap: () {
-                            if (listCustomer.isNotEmpty &&
-                                listCustomer[0]['image'] != null) {
-                              Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) => const HistoryWallet(),
-                                ),
-                              );
-                            } else {
-                              Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) => const Login(),
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                        WIconSetting(
-                          title: "Funding Detail",
-                          color: Colors.blue,
-                          icon: CupertinoIcons.doc_text_search,
-                          onTap: () {
-                            if (listCustomer.isNotEmpty &&
-                                listCustomer[0]['image'] != null) {
-                              Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) => const HistoryPoint(),
-                                ),
-                              );
-                            } else {
-                              Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) => const Login(),
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                        WIconSetting(
-                          title: "History Transaction",
-                          color: Colors.blue,
-                          icon: CupertinoIcons.doc_checkmark,
-                          onTap: () {
-                            if (listCustomer.isNotEmpty &&
-                                listCustomer[0]['image'] != null) {
-                              Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) =>
-                                      const HistoryTransaction(),
-                                ),
-                              );
-                            } else {
-                              Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) => const Login(),
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    // const Text(
+                    //   "My Account",
+                    //   style: TextStyle(fontWeight: FontWeight.bold),
+                    // ),
+                    // const Divider(
+                    //   color: Colors.black,
+                    // ),
+                    // const SizedBox(height: 10),
+                    // Column(
+                    //   children: [
+                    //     WIconSetting(
+                    //       title: "Recharge",
+                    //       color: Colors.amber,
+                    //       icon: CupertinoIcons.up_arrow,
+                    //       onTap: () {
+                    //         if (listCustomer.isNotEmpty &&
+                    //             listCustomer[0]['image'] != null) {
+                    //           Navigator.of(context).push(
+                    //             CupertinoPageRoute(
+                    //               builder: (context) => const HistoryWallet(),
+                    //             ),
+                    //           );
+                    //         } else {
+                    //           Navigator.of(context).push(
+                    //             CupertinoPageRoute(
+                    //               builder: (context) => const Login(),
+                    //             ),
+                    //           );
+                    //         }
+                    //       },
+                    //     ),
+                    //     WIconSetting(
+                    //       title: "Funding Detail",
+                    //       color: Colors.blue,
+                    //       icon: CupertinoIcons.doc_text_search,
+                    //       onTap: () {
+                    //         if (listCustomer.isNotEmpty &&
+                    //             listCustomer[0]['image'] != null) {
+                    //           Navigator.of(context).push(
+                    //             CupertinoPageRoute(
+                    //               builder: (context) => const HistoryPoint(),
+                    //             ),
+                    //           );
+                    //         } else {
+                    //           Navigator.of(context).push(
+                    //             CupertinoPageRoute(
+                    //               builder: (context) => const Login(),
+                    //             ),
+                    //           );
+                    //         }
+                    //       },
+                    //     ),
+                    //   ],
+                    // ),
+                    // const SizedBox(
+                    //   height: 10,
+                    // ),
                     const Text(
                       "My Team",
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -481,6 +457,11 @@ class _SettingPagesState extends State<SettingPages> {
                           onTap: () {
                             if (listCustomer.isNotEmpty &&
                                 listCustomer[0]['image'] != null) {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Page404(),
+                                ),
+                              );
                             } else {
                               Navigator.of(context).push(
                                 CupertinoPageRoute(
@@ -497,6 +478,11 @@ class _SettingPagesState extends State<SettingPages> {
                           onTap: () {
                             if (listCustomer.isNotEmpty &&
                                 listCustomer[0]['image'] != null) {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Page404(),
+                                ),
+                              );
                             } else {
                               Navigator.of(context).push(
                                 CupertinoPageRoute(
@@ -543,12 +529,39 @@ class _SettingPagesState extends State<SettingPages> {
                           },
                         ),
                         WIconSetting(
+                          title: "History Transaction",
+                          color: Colors.blue,
+                          icon: CupertinoIcons.doc_checkmark,
+                          onTap: () {
+                            if (listCustomer.isNotEmpty &&
+                                listCustomer[0]['image'] != null) {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) =>
+                                      const HistoryTransaction(),
+                                ),
+                              );
+                            } else {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Login(),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                        WIconSetting(
                           title: "Bank Account",
                           color: Colors.brown,
                           icon: Icons.account_balance,
                           onTap: () {
                             if (listCustomer.isNotEmpty &&
                                 listCustomer[0]['image'] != null) {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Page404(),
+                                ),
+                              );
                             } else {
                               Navigator.of(context).push(
                                 CupertinoPageRoute(
@@ -565,6 +578,11 @@ class _SettingPagesState extends State<SettingPages> {
                           onTap: () {
                             if (listCustomer.isNotEmpty &&
                                 listCustomer[0]['image'] != null) {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const Page404(),
+                                ),
+                              );
                             } else {
                               Navigator.of(context).push(
                                 CupertinoPageRoute(

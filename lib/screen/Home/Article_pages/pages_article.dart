@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
-import 'package:rsnaturopaty/screen/Home/Kategory_Home/about_as.dart';
+//import 'package:rsnaturopaty/screen/Home/Kategory_Home/about_as.dart';
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
 import 'package:rsnaturopaty/widget/utils/ImagesContainer.dart';
 
 class PagesArticle extends StatefulWidget {
-  const PagesArticle({super.key});
+  const PagesArticle({
+    super.key,
+    required this.permaLink,
+  });
+  final String permaLink;
 
   @override
   State<PagesArticle> createState() => _PagesArticleState();
@@ -25,9 +29,12 @@ class _PagesArticleState extends State<PagesArticle> {
   }
 
   getArticleDetail() async {
+    print(listArticle);
+    print("======== Link ========");
+    print('${Endpoint.getArticlePermalink}${widget.permaLink}');
     try {
       final response = await http.get(
-        Uri.parse(Endpoint.imgSlider),
+        Uri.parse('${Endpoint.getArticlePermalink}${widget.permaLink}'),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'X-auth-token': 'X-auth-token',
@@ -36,6 +43,7 @@ class _PagesArticleState extends State<PagesArticle> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
+        print("=========== get article detail ===========");
         print(responseJson);
         setState(() {
           listArticle = responseJson['content'];
@@ -50,10 +58,16 @@ class _PagesArticleState extends State<PagesArticle> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        title: const Text(
+          "Article",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.purple,
+        centerTitle: true,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          color: Colors.white,
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -62,9 +76,10 @@ class _PagesArticleState extends State<PagesArticle> {
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const ArticleImagesHead(
-            imageUrl: 'assets/images/Indonesia_map.png',
-            //imageUrl: listArticle['image'],
+          ArticleImagesHead(
+            imageUrl: listArticle['image'].toString(),
+            categoryArticle: listArticle['category'].toString(),
+            dateArticle: listArticle['date'].toString(),
           ),
           Container(
             padding: const EdgeInsets.all(20),
@@ -74,17 +89,22 @@ class _PagesArticleState extends State<PagesArticle> {
                   topRight: Radius.circular(20),
                 ),
                 color: Colors.white),
-            child: const Column(
+            child: Column(
               children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                  listArticle['title'].toString(),
+                  // "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.w700),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
+                  listArticle['text'].toString(),
+                  //"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w300),
+                  textAlign: TextAlign.justify,
                 ),
               ],
             ),
@@ -101,8 +121,12 @@ class ArticleImagesHead extends StatelessWidget {
   const ArticleImagesHead({
     super.key,
     required this.imageUrl,
+    required this.categoryArticle,
+    required this.dateArticle,
   });
   final String imageUrl;
+  final String categoryArticle;
+  final String dateArticle;
 
   @override
   Widget build(BuildContext context) {
@@ -110,40 +134,40 @@ class ArticleImagesHead extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.45,
       width: double.infinity,
       imageUrl: imageUrl,
-      child: const Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               CustomTag(
-                backgroundColor: Colors.black,
+                backgroundColor: Colors.black.withOpacity(0.5),
                 children: [
-                  SizedBox(width: 10),
                   Text(
-                    "catArtic",
-                    style: TextStyle(color: Colors.white),
+                    categoryArticle,
+                    style: const TextStyle(color: Colors.white),
                   )
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
               CustomTag(
-                backgroundColor: Colors.grey,
+                backgroundColor: Colors.grey.withOpacity(0.5),
                 children: [
-                  Icon(Icons.timer, color: Colors.grey),
-                  SizedBox(width: 10),
+                  const Icon(Icons.timer, color: Colors.black),
+                  const SizedBox(width: 10),
                   Text(
-                    "8h",
-                    style: TextStyle(color: Colors.black),
+                    dateArticle,
+                    style: const TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.w700),
                   )
                 ],
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
         ],
       ),
     );

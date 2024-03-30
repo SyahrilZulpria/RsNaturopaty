@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rsnaturopaty/widget/utils/ImagesContainer.dart';
+//import 'package:rsnaturopaty/widget/utils/ImagesContainer.dart';
 
 class AbaoutAsPage extends StatefulWidget {
   const AbaoutAsPage({super.key});
@@ -13,7 +13,12 @@ class _AbaoutAsPageState extends State<AbaoutAsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        title: const Text(
+          "About US",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.purple,
+        centerTitle: true,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -28,7 +33,7 @@ class _AbaoutAsPageState extends State<AbaoutAsPage> {
         padding: EdgeInsets.zero,
         children: [
           const AboutImagesHead(
-            imageUrl: '/assets/images/Rs_Naturopaty.jpeg',
+            imageUrl: 'assets/images/Indonesia_map.png',
             //imageUrl: listArticle['image'],
           ),
           Container(
@@ -101,12 +106,12 @@ class AboutImagesHead extends StatelessWidget {
         children: [
           Row(
             children: [
+              const SizedBox(width: 10),
               CustomTag(
                 backgroundColor: Colors.black.withOpacity(0.5),
                 children: const [
-                  SizedBox(width: 10),
                   Text(
-                    "About AS",
+                    "About US",
                     style: TextStyle(color: Colors.white),
                   )
                 ],

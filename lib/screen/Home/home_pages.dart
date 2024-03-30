@@ -10,6 +10,7 @@ import 'package:rsnaturopaty/screen/Home/Article_pages/article_pages.dart';
 import 'package:rsnaturopaty/screen/Home/Article_pages/discover_article.dart';
 import 'package:rsnaturopaty/screen/Home/Article_pages/pages_article.dart';
 import 'package:rsnaturopaty/screen/Home/Kategory_Home/about_as.dart';
+import 'package:rsnaturopaty/screen/Home/Kategory_Home/announcement.dart';
 import 'package:rsnaturopaty/screen/Home/Notification/page_notification.dart';
 import 'package:rsnaturopaty/screen/Home/Kategory_Home/team_member.dart';
 import 'package:rsnaturopaty/screen/Setting/wallet_poiny/history_point.dart';
@@ -57,7 +58,6 @@ class _HomePagesState extends State<HomePages> {
   @override
   void initState() {
     super.initState();
-
     getSharedPref();
     articlePermalink();
     imgSlider();
@@ -97,6 +97,8 @@ class _HomePagesState extends State<HomePages> {
               .map((imageData) => imageData['image'].toString())
               .toList();
         });
+        print("----- IMG ----------");
+        print(listImgSlider.toString());
       } else {
         print("Get data failed with status code: ${response.statusCode}");
       }
@@ -231,6 +233,8 @@ class _HomePagesState extends State<HomePages> {
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
         final articlePromo = responseJson['content']['result'];
+        print("========= Article Home ============");
+        print(articlePromo);
         setState(() {
           listArticle = List.from(articlePromo);
         });
@@ -445,33 +449,16 @@ class _HomePagesState extends State<HomePages> {
                 ),
               ),
             ),
-            const SizedBox(height: 30),
-            CarouselSlider.builder(
-              itemCount: listImgSlider.length,
-              itemBuilder: (context, index, realIndex) {
-                final urlImage = listImgSlider[index];
-
-                return buildImage(urlImage);
-              },
-              options: CarouselOptions(
-                  // height: 200,
-                  autoPlay: true,
-                  enableInfiniteScroll: false,
-                  autoPlayAnimationDuration: const Duration(seconds: 5),
-                  enlargeCenterPage: true,
-                  onPageChanged: (index, reason) =>
-                      setState(() => activeIndex = index)),
-            ),
-            const SizedBox(height: 12),
-            buildIndicator(),
             const SizedBox(height: 20),
-            // Padding(
-            //   padding: const EdgeInsets.all(10),
-            //   child: SlideViewBanner(
-            //     banners: [listImgSlider.toString()],
-            //   ),
-            // ),
-            //const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: listImgSlider.isNotEmpty
+                  ? SlideViewBanner(
+                      banners: listImgSlider,
+                    )
+                  : const CircularProgressIndicator(),
+            ),
+            const SizedBox(height: 20),
             Container(
               //color: Colors.cyan,
               margin: const EdgeInsets.only(top: 20),
@@ -520,12 +507,18 @@ class _HomePagesState extends State<HomePages> {
                                   title: 'Announcement',
                                   icon: 'assets/icons/announcement.png',
                                   onPressed: () {
+                                    Navigator.of(context).push(
+                                      CupertinoPageRoute(
+                                        builder: (context) =>
+                                            const AnnouncementPage(),
+                                      ),
+                                    );
                                     print("Announcement");
                                   },
                                 ),
                                 const SizedBox(width: 10),
                                 WMenuKategori(
-                                  title: 'About as',
+                                  title: 'About US',
                                   icon: 'assets/icons/letter-i.png',
                                   onPressed: () {
                                     Navigator.of(context).push(
@@ -534,7 +527,7 @@ class _HomePagesState extends State<HomePages> {
                                             const AbaoutAsPage(),
                                       ),
                                     );
-                                    print("Abaout As");
+                                    print("Abaout US");
                                   },
                                 ),
                                 const SizedBox(width: 10),
@@ -572,19 +565,29 @@ class _HomePagesState extends State<HomePages> {
                 itemBuilder: (context, index) {
                   return Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                    width: MediaQuery.of(context).size.width * 0.5,
+                    width: 250,
+                    //MediaQuery.of(context).size.width * 0.5,
                     margin: const EdgeInsets.only(right: 10),
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).push(CupertinoPageRoute(
-                            builder: (context) => const PagesArticle()));
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (context) => PagesArticle(
+                              permaLink:
+                                  listArticle[index]['permalink'].toString(),
+                            ),
+                          ),
+                        );
+                        print("Cek Article");
+                        print(listArticle[index]['image'].toString());
+                        print(listArticle[index]['permalink'].toString());
                         print("Cek Article");
                       },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ImagesContainer(
-                            width: 120,
+                            width: 180,
                             height: 120,
                             imageUrl: listArticle[index]['image'].toString(),
                             borderRadius: 15,
@@ -629,45 +632,8 @@ class _HomePagesState extends State<HomePages> {
               ),
             ),
             const SizedBox(height: 30),
-            // Container(
-            //   color: Colors.amber,
-            //   width: double.infinity,
-            //   height: 200,
-            // ),
-            // SizedBox(
-            //   height: MediaQuery.of(context).size.height - 200,
-            //   child: Column(
-            //     children: [
-            //       Container(
-            //         color: Colors.blue,
-            //       )
-            //     ],
-            //   ),
-            // ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget buildIndicator() => AnimatedSmoothIndicator(
-        onDotClicked: animateToSlide,
-        effect: const ExpandingDotsEffect(
-            dotWidth: 15, activeDotColor: headerBackground),
-        activeIndex: activeIndex,
-        count: listImgSlider.length,
-      );
-
-  void animateToSlide(int index) => controller.animateToPage(index);
-
-  Widget buildImage(String urlImage) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(30), // Atur radius sesuai kebutuhan
-      child: Stack(
-        alignment: AlignmentDirectional.bottomCenter,
-        children: [
-          Image.network(urlImage, fit: BoxFit.cover),
-        ],
       ),
     );
   }

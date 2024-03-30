@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
+import 'package:rsnaturopaty/widget/utils/NavBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HistoryTransaction extends StatefulWidget {
@@ -90,7 +92,17 @@ class _HistoryTransactionState extends State<HistoryTransaction> {
             style: TextStyle(color: Colors.white),
           ),
           centerTitle: true,
-          iconTheme: const IconThemeData(color: Colors.white),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            color: Colors.white,
+            onPressed: () {
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) => const NavCustomButton(),
+                ),
+              );
+            },
+          ),
           backgroundColor: Colors.purple,
         ),
         body: SmartRefresher(
