@@ -3,11 +3,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:rsnaturopaty/login.dart';
-import 'package:rsnaturopaty/screen/Home/Article_pages/article_pages.dart';
-import 'package:rsnaturopaty/screen/Home/Article_pages/discover_article.dart';
+import 'package:rsnaturopaty/screen/Home/Article_pages/discover_article_view.dart';
 import 'package:rsnaturopaty/screen/Home/Article_pages/pages_article.dart';
 import 'package:rsnaturopaty/screen/Home/Kategory_Home/about_as.dart';
 import 'package:rsnaturopaty/screen/Home/Kategory_Home/announcement.dart';
@@ -23,7 +21,6 @@ import 'package:rsnaturopaty/widget/widget_banner/SliderViewBanner.dart';
 import 'package:rsnaturopaty/widget/widget_kategori/WMenuKategori.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomePages extends StatefulWidget {
   const HomePages({
@@ -74,9 +71,10 @@ class _HomePagesState extends State<HomePages> {
       noPhone = sp.getString("noPhone")!;
       log = sp.getString("log")!;
     });
-    saldoDompet();
-    saldoPoint();
-    getNotification();
+    await decodeToken();
+    await saldoDompet();
+    await saldoPoint();
+    await getNotification();
   }
 
   imgSlider() async {
@@ -107,6 +105,29 @@ class _HomePagesState extends State<HomePages> {
     }
   }
 
+  decodeToken() async {
+    print('========= Decode =========');
+    print(Endpoint.decodeToken);
+    try {
+      final response = await http.post(
+        Uri.parse(Endpoint.decodeToken),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'X-auth-token': token,
+        },
+      ).timeout(const Duration(seconds: 60));
+
+      if (response.statusCode == 200) {
+        print('decodeToken : ${response.statusCode}');
+        final Map<String, dynamic> responseJson =
+            json.decode(response.body.toString());
+        print(responseJson);
+      }
+    } catch (e) {
+      CustomDialog().warning(context, '', e.toString());
+    }
+  }
+
   getNotification() async {
     print(Endpoint.getNotification);
     try {
@@ -121,6 +142,7 @@ class _HomePagesState extends State<HomePages> {
               body: notifBody)
           .timeout(const Duration(seconds: 60));
       if (response.statusCode == 200) {
+        print('getNotification : ${response.statusCode}');
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
         setState(() {
@@ -136,27 +158,6 @@ class _HomePagesState extends State<HomePages> {
     }
   }
 
-  // decodeToken() async {
-  //   print(Endpoint.decodeToken);
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(Endpoint.decodeToken),
-  //       headers: <String, String>{
-  //         'Content-Type': 'application/json',
-  //         'X-auth-token': token,
-  //       },
-  //     ).timeout(const Duration(seconds: 60));
-
-  //     if (response.statusCode == 200) {
-  //       final Map<String, dynamic> responseJson =
-  //           json.decode(response.body.toString());
-  //       print(responseJson);
-  //     }
-  //   } catch (e) {
-  //     CustomDialog().warning(context, '', e.toString());
-  //   }
-  // }
-
   saldoDompet() async {
     print(Endpoint.getDompet);
     try {
@@ -170,6 +171,7 @@ class _HomePagesState extends State<HomePages> {
               body: resBody)
           .timeout(const Duration(seconds: 60));
       if (response.statusCode == 200) {
+        print('saldoPoint: ${response.statusCode}');
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
         final Map<String, dynamic> content = responseJson['content'];
@@ -199,6 +201,7 @@ class _HomePagesState extends State<HomePages> {
               body: resBody)
           .timeout(const Duration(seconds: 60));
       if (response.statusCode == 200) {
+        print('saldoPoint: ${response.statusCode}');
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
         final Map<String, dynamic> content = responseJson['content'];
@@ -518,7 +521,7 @@ class _HomePagesState extends State<HomePages> {
                                 ),
                                 const SizedBox(width: 10),
                                 WMenuKategori(
-                                  title: 'About US',
+                                  title: 'About us',
                                   icon: 'assets/icons/letter-i.png',
                                   onPressed: () {
                                     Navigator.of(context).push(
@@ -551,7 +554,7 @@ class _HomePagesState extends State<HomePages> {
                 showActionButton: true,
                 onPressed: () {
                   Navigator.of(context).push(CupertinoPageRoute(
-                      builder: (context) => const ArticleDiscover()));
+                      builder: (context) => const ArticleDiscoverView()));
                   print("test");
                 },
               ),

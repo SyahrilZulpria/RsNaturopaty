@@ -130,7 +130,6 @@ class _LoginState extends State<Login> {
 
   dataRegistrasiToSP(var data) async {
     final sp = await SharedPreferences.getInstance();
-    //sp.setString('userId', data['id'].toString());
     sp.setString('userId', data["id"].toString());
     sp.setString('email', data["username"].toString());
     sp.setString('noPhone', data["phone"].toString());
@@ -151,20 +150,13 @@ class _LoginState extends State<Login> {
   tokenGk(var data) async {
     final sp = await SharedPreferences.getInstance();
     sp.setString('token', data['content']['token'].toString());
+
+    Navigator.of(context).pushReplacement(
+        CupertinoPageRoute(builder: (context) => const NavCustomButton()));
   }
 
   dataLoginToSP(var data) async {
     final sp = await SharedPreferences.getInstance();
-
-    // print("----================--------");
-    // print("Data Reg");
-    // //print(data['userid']);
-    // print(data['name']);
-    // print(data['username'].toString());
-    // print(data['phone'].toString());
-    // print(data['log'].toString());
-    // print(data['status'].toString());
-    // print("----================--------");
 
     sp.setString('userId', data['userid'].toString());
     sp.setString('name', data['name'].toString());

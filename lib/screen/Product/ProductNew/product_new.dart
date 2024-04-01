@@ -62,7 +62,7 @@ class _ProductNewState extends State<ProductNew> {
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
+        //iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.purple,
       ),
       body: Column(
@@ -107,10 +107,12 @@ class _ProductNewState extends State<ProductNew> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height: 5),
-                                  const Text(
-                                    "53532532532",
-                                    //productList[index]['price'],
-                                    style: TextStyle(
+                                  Text(
+                                    productList[index]['price'].toString(),
+                                    // productList[index]['price'] != null
+                                    //     ? productList[index]['price'].toString()
+                                    //     : '0',
+                                    style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700),
                                   ),

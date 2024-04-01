@@ -24,16 +24,9 @@ class _ProfilePageState extends State<ProfilePage> {
   String token = '';
 
   List listCustomer = [];
-  // final TextEditingController _nameController = TextEditingController();
-  // final TextEditingController _emailController = TextEditingController();
-  // final TextEditingController _bioController = TextEditingController();
-
-  //String _profileImageUrl = 'https://via.placeholder.com/150';
-  //late File _profileImageFile = File('');
+  Map<String, dynamic> listImage = {};
   File? _imageFile;
-
-  //PickedFile? _imageFile;
-  //final ImagePicker _picker = ImagePicker();
+  final picker = ImagePicker();
 
   @override
   void initState() {
@@ -41,37 +34,26 @@ class _ProfilePageState extends State<ProfilePage> {
     getSharedPref();
   }
 
+  Future<void> refreshData() async {
+    await getDataCustomer();
+  }
+
   getSharedPref() async {
     final sp = await SharedPreferences.getInstance();
 
     setState(() {
       token = sp.getString("token")!;
-      // userId = sp.getString("userId")!;
       name = sp.getString("name") ?? "Guest";
-      // email = sp.getString("email")!;
-      // noPhone = sp.getString("noPhone")!;
-      // log = sp.getString("log")!;
     });
     getDataCustomer();
   }
 
-  // Future<void> _changeProfileImage() async {
-  //   final picker = ImagePicker();
-  //   final pickedFile = await picker.pickImage(
-  //     source: ImageSource.gallery,
-  //   ); // Change to ImageSource.camera for camera
-
-  //   if (pickedFile != null) {
-  //     setState(() {
-  //       _profileImageFile = File(pickedFile.path);
-  //     });
-  //   }
-  // }
   getDataCustomer() async {
+    print(Endpoint.getCustomer);
     try {
       final response = await http
           .get(Uri.parse(Endpoint.getCustomer), headers: <String, String>{
-        //'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
         'X-auth-token': token,
       }).timeout(const Duration(seconds: 60));
       if (response.statusCode == 200) {
@@ -83,6 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
         print(dataCustomer);
         setState(() {
           listCustomer = [dataCustomer];
+          listImage = responseJson['content'];
         });
         print("============Hasil Get data listCustomer===========");
         print(listCustomer);
@@ -92,6 +75,46 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     } catch (e) {
       CustomDialog().warning(context, '', e.toString());
+    }
+  }
+
+  Future<void> uploadImageProfile() async {
+    print("SalesAddItem");
+    print(Endpoint.upProfileImg);
+    try {
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse(Endpoint.upProfileImg),
+      );
+      request.headers['X-auth-token'] = token;
+      request.fields['userfile'] = '';
+
+      print("==================");
+      print("========= Body Upload Image ==========");
+      print('Request Body: ${request.fields}');
+
+      final response = await request.send();
+      final responseData = await response.stream.transform(utf8.decoder).join();
+      print("Upload Foto : ${response.statusCode}");
+      if (response.statusCode == 200) {
+        print('${response.statusCode}');
+        final Map<String, dynamic> responseJson = json.decode(responseData);
+        String content = responseJson['content'];
+        print(content);
+        //CustomDialog().warning(context, '', content);
+        print("============== Item Add =================");
+        print(responseJson);
+      } else if (response.statusCode == 400) {
+        print('${response.statusCode}');
+        final Map<String, dynamic> errorJson = json.decode(responseData);
+        String errorMessage = errorJson["error"];
+        //CustomDialog().warning(context, '', errorMessage);
+        print(errorMessage);
+      } else {
+        print("Error salesAddItem status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      //CustomDialog().warning(context, '', e.toString());
     }
   }
 
@@ -114,280 +137,286 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // Panggil Navigator.pop(context) saat ikon kembali diklik
+            Navigator.pop(context);
+          },
+        ),
         backgroundColor: Colors.purple,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(
-                  top: 20, right: 20, left: 20, bottom: 15),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25),
-                boxShadow: [
-                  BoxShadow(color: Colors.grey.shade400, blurRadius: 3),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    top: 20, bottom: 15, right: 20, left: 20),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 10),
-                    GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return SafeArea(
-                              child: Wrap(
-                                children: <Widget>[
-                                  const SizedBox(height: 10),
-                                  ListTile(
-                                    leading: const Icon(Icons.photo_library),
-                                    title: const Text('Photo Library'),
-                                    onTap: () {
-                                      _pickImage(ImageSource.gallery);
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  ListTile(
-                                    leading: const Icon(Icons.camera_alt),
-                                    title: const Text('Camera'),
-                                    onTap: () {
-                                      _pickImage(ImageSource.camera);
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      child: _imageFile == null
-                          ? const CircleAvatar(
-                              radius: 50,
-                              backgroundImage: AssetImage('assets/nophoto.jpg'),
-                            )
-                          : CircleAvatar(
-                              radius: 150,
-                              backgroundImage: FileImage(_imageFile!),
-                            ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Username',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      'Email Address',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    // SizedBox(
-                    //   width: double.infinity,
-                    //   child: Column(
-                    //     children: [
-                    //       WCircularImage(
-                    //         image: _profileImageFile != null
-                    //             ? _profileImageFile
-                    //                 .path // Gunakan path dari File
-                    //             : 'https://via.placeholder.com/150',
-                    //         width: 150,
-                    //         height: 150,
-                    //       ),
-                    //       TextButton(
-                    //         onPressed: () {
-                    //           _changeProfileImage();
-                    //         },
-                    //         child: const Text('Change Profile Picture'),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                    const SizedBox(height: 30),
-                    const Divider(
-                      thickness: 0.5,
-                      color: Colors.black,
-                    ),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: listCustomer.length,
-                        itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              //const SizedBox(height: 20),
-                              WTextEditeProfile(
-                                onPressed: () {
-                                  editDataPage(EditType.Name);
-                                  print('Edit Name');
-                                },
-                                title: 'Name',
-                                value: listCustomer[index]['fname'] ??
-                                    'Your name'.toString(),
-                              ),
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.black,
-                              ),
-                              WTextEditeProfile(
-                                onPressed: () {
-                                  print('Edit email');
-                                },
-                                title: 'E-mail',
-                                value: listCustomer[index]['email'] ??
-                                    'Your email'.toString(),
-                              ),
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.black,
-                              ),
-                              WTextEditeProfile(
-                                onPressed: () {
-                                  print('Edit phone');
-                                },
-                                title: 'No Phone',
-                                value: listCustomer[index]['phone1'] ??
-                                    'Your no phone'.toString(),
-                              ),
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.black,
-                              ),
-                              WTextEditeProfile(
-                                onPressed: () {
-                                  print('Edit password');
-                                },
-                                title: 'Password',
-                                value: listCustomer[index]['password'] ??
-                                    '**********'.toString(),
-                              ),
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.black,
-                              ),
-                              WTextEditeProfile(
-                                onPressed: () {
-                                  print('Edit city');
-                                },
-                                title: 'City',
-                                value: listCustomer[index]['city'] ??
-                                    'Your city'.toString(),
-                              ),
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.black,
-                              ),
-                              WTextEditeProfile(
-                                onPressed: () {
-                                  print('Edit address');
-                                  editDataPage(EditType.Address);
-                                },
-                                title: 'Addres',
-                                value: listCustomer[index]['address'] ??
-                                    'Your address'.toString(),
-                              ),
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.black,
-                              ),
-                              WTextEditeProfile(
-                                onPressed: () {
-                                  editDataNumberPage(EditNumberType.ZIP);
-                                  print('Edit zip');
-                                },
-                                title: 'Kode Pos',
-                                value: listCustomer[index]['zip'] ??
-                                    'Your zip'.toString(),
-                              ),
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.black,
-                              ),
-                              WTextEditeProfile(
-                                onPressed: () {
-                                  editDataPage(EditType.Profession);
-                                  print('Edit profession');
-                                },
-                                title: 'Profession',
-                                value: listCustomer[index]['profession'] ??
-                                    'Your profession'.toString(),
-                              ),
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.black,
-                              ),
-                              WTextEditeProfile(
-                                onPressed: () {
-                                  editDataPage(EditType.Organization);
-                                  print('Edit organization');
-                                },
-                                title: 'Organization',
-                                value: listCustomer[index]['organization'] ??
-                                    'Your organization'.toString(),
-                              ),
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.black,
-                              ),
-                              WTextEditeProfile(
-                                onPressed: () {
-                                  editDataNumberPage(EditNumberType.NPWP);
-                                  print('Edit npwp');
-                                },
-                                title: 'NPWP',
-                                value: listCustomer[index]['npwp'] ??
-                                    'Your NPWP'.toString(),
-                              ),
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.black,
-                              ),
-                              WTextEditeProfile(
-                                onPressed: () {
-                                  editDataPage(EditType.Website);
-                                  print('Edit website');
-                                },
-                                title: 'Website',
-                                value: listCustomer[index]['website'] ??
-                                    'Your website',
-                              ),
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.black,
-                              ),
-                              WTextEditeProfile(
-                                onPressed: () {
-                                  editDataPage(EditType.Instagram);
-                                  print('Edit instagram');
-                                },
-                                title: 'Instagram',
-                                value: listCustomer[index]['instagram'] ??
-                                    'Your instagram',
-                              ),
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.black,
-                              ),
-                              const SizedBox(height: 50),
-                            ],
-                          );
-                        })
+      body: RefreshIndicator(
+        onRefresh: refreshData,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(
+                    top: 20, right: 20, left: 20, bottom: 15),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  boxShadow: [
+                    BoxShadow(color: Colors.grey.shade400, blurRadius: 3),
                   ],
                 ),
-              ),
-            )
-          ],
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      top: 20, bottom: 15, right: 20, left: 20),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      Stack(
+                        children: [
+                          SizedBox(
+                            width: 120,
+                            height: 129,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: Image.network(""),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              width: 35,
+                              height: 35,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  color: Colors.purple),
+                              child: const Icon(
+                                Icons.camera_alt_outlined,
+                                size: 20,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        listImage['email'].toString(),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        listImage['phone1'].toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      const Divider(
+                        thickness: 0.5,
+                        color: Colors.black,
+                      ),
+                      ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: listCustomer.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                //const SizedBox(height: 20),
+                                WTextEditeProfile(
+                                  onPressed: () {
+                                    editDataPage(EditType.Name);
+                                    print('Edit Name');
+                                  },
+                                  title: 'Name',
+                                  value: listCustomer[index]['fname'] ??
+                                      'Your name'.toString(),
+                                ),
+                                const Divider(
+                                  thickness: 0.5,
+                                  color: Colors.black,
+                                ),
+                                WTextEditeProfile(
+                                  onPressed: () {
+                                    print('Edit email');
+                                  },
+                                  title: 'E-mail',
+                                  value: listCustomer[index]['email'] ??
+                                      'Your email'.toString(),
+                                ),
+                                const Divider(
+                                  thickness: 0.5,
+                                  color: Colors.black,
+                                ),
+                                WTextEditeProfile(
+                                  onPressed: () {
+                                    print('Edit phone');
+                                  },
+                                  title: 'No Phone',
+                                  value: listCustomer[index]['phone1'] ??
+                                      'Your no phone'.toString(),
+                                ),
+                                const Divider(
+                                  thickness: 0.5,
+                                  color: Colors.black,
+                                ),
+                                WTextEditeProfile(
+                                  onPressed: () {
+                                    print('Edit password');
+                                  },
+                                  title: 'Password',
+                                  value: listCustomer[index]['password'] ??
+                                      '**********'.toString(),
+                                ),
+                                const Divider(
+                                  thickness: 0.5,
+                                  color: Colors.black,
+                                ),
+                                WTextEditeProfile(
+                                  onPressed: () {
+                                    print('Edit city');
+                                  },
+                                  title: 'City',
+                                  value: listCustomer[index]['city'] ??
+                                      'Your city'.toString(),
+                                ),
+                                const Divider(
+                                  thickness: 0.5,
+                                  color: Colors.black,
+                                ),
+                                WTextEditeProfile(
+                                  onPressed: () {
+                                    print('Edit address');
+                                    editDataPage(EditType.Address);
+                                  },
+                                  title: 'Addres',
+                                  value: listCustomer[index]['address'] ??
+                                      'Your address'.toString(),
+                                ),
+                                const Divider(
+                                  thickness: 0.5,
+                                  color: Colors.black,
+                                ),
+                                WTextEditeProfile(
+                                  onPressed: () {
+                                    editDataNumberPage(EditNumberType.ZIP);
+                                    print('Edit zip');
+                                  },
+                                  title: 'Kode Pos',
+                                  value: listCustomer[index]['zip'] ??
+                                      'Your zip'.toString(),
+                                ),
+                                const Divider(
+                                  thickness: 0.5,
+                                  color: Colors.black,
+                                ),
+                                WTextEditeProfile(
+                                  onPressed: () {
+                                    editDataPage(EditType.Profession);
+                                    print('Edit profession');
+                                  },
+                                  title: 'Profession',
+                                  value: listCustomer[index]['profession'] ??
+                                      'Your profession'.toString(),
+                                ),
+                                const Divider(
+                                  thickness: 0.5,
+                                  color: Colors.black,
+                                ),
+                                WTextEditeProfile(
+                                  onPressed: () {
+                                    editDataPage(EditType.Organization);
+                                    print('Edit organization');
+                                  },
+                                  title: 'Organization',
+                                  value: listCustomer[index]['organization'] ??
+                                      'Your organization'.toString(),
+                                ),
+                                const Divider(
+                                  thickness: 0.5,
+                                  color: Colors.black,
+                                ),
+                                WTextEditeProfile(
+                                  onPressed: () {
+                                    editDataNumberPage(EditNumberType.NPWP);
+                                    print('Edit npwp');
+                                  },
+                                  title: 'NPWP',
+                                  value: listCustomer[index]['npwp'] ??
+                                      'Your NPWP'.toString(),
+                                ),
+                                const Divider(
+                                  thickness: 0.5,
+                                  color: Colors.black,
+                                ),
+                                WTextEditeProfile(
+                                  onPressed: () {
+                                    editDataPage(EditType.Website);
+                                    print('Edit website');
+                                  },
+                                  title: 'Website',
+                                  value: listCustomer[index]['website'] ??
+                                      'Your website',
+                                ),
+                                const Divider(
+                                  thickness: 0.5,
+                                  color: Colors.black,
+                                ),
+                                WTextEditeProfile(
+                                  onPressed: () {
+                                    editDataPage(EditType.Instagram);
+                                    print('Edit instagram');
+                                  },
+                                  title: 'Instagram',
+                                  value: listCustomer[index]['instagram'] ??
+                                      'Your instagram',
+                                ),
+                                const Divider(
+                                  thickness: 0.5,
+                                  color: Colors.black,
+                                ),
+                                const SizedBox(height: 50),
+                              ],
+                            );
+                          })
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  void _showImagePicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Photo Library'),
+                onTap: () {
+                  _pickImage(ImageSource.gallery);
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Camera'),
+                onTap: () {
+                  _pickImage(ImageSource.camera);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -457,57 +486,4 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-
-  // Widget bottomSheet() {
-  //   return Container(
-  //     height: 100.0,
-  //     width: MediaQuery.of(context).size.width,
-  //     margin: const EdgeInsets.symmetric(
-  //       horizontal: 20,
-  //       vertical: 20,
-  //     ),
-  //     child: Column(
-  //       children: <Widget>[
-  //         const Text(
-  //           "Choose Profile photo",
-  //           style: TextStyle(
-  //             fontSize: 20.0,
-  //           ),
-  //         ),
-  //         const SizedBox(
-  //           height: 20,
-  //         ),
-  //         Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-  //           TextButton.icon(
-  //             icon: const Icon(Icons.camera),
-  //             onPressed: () {
-  //               takePhoto(ImageSource.camera);
-  //             },
-  //             label: const Text("Camera"),
-  //           ),
-  //           TextButton.icon(
-  //             icon: const Icon(Icons.image),
-  //             onPressed: () {
-  //               takePhoto(ImageSource.gallery);
-  //             },
-  //             label: const Text("Gallery"),
-  //           ),
-  //         ])
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // void takePhoto(ImageSource source) async {
-  //   final pickedFile = await _picker.pickImage(
-  //     source: source,
-  //   );
-  //   setState(() {
-  //     if (pickedFile != null) {
-  //       _imageFile = File(pickedFile.path) as PickedFile;
-  //     } else {
-  //       print('No image selected.');
-  //     }
-  //   });
-  // }
 }

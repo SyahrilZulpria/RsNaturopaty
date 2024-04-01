@@ -36,7 +36,6 @@ class _SettingPagesState extends State<SettingPages> {
   @override
   void initState() {
     super.initState();
-
     getSharedPref();
   }
 
@@ -256,8 +255,8 @@ class _SettingPagesState extends State<SettingPages> {
                     Column(
                       children: [
                         Container(
-                          width: 50,
-                          height: 50,
+                          width: 120,
+                          height: 120,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             image: DecorationImage(
@@ -383,63 +382,6 @@ class _SettingPagesState extends State<SettingPages> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // const Text(
-                    //   "My Account",
-                    //   style: TextStyle(fontWeight: FontWeight.bold),
-                    // ),
-                    // const Divider(
-                    //   color: Colors.black,
-                    // ),
-                    // const SizedBox(height: 10),
-                    // Column(
-                    //   children: [
-                    //     WIconSetting(
-                    //       title: "Recharge",
-                    //       color: Colors.amber,
-                    //       icon: CupertinoIcons.up_arrow,
-                    //       onTap: () {
-                    //         if (listCustomer.isNotEmpty &&
-                    //             listCustomer[0]['image'] != null) {
-                    //           Navigator.of(context).push(
-                    //             CupertinoPageRoute(
-                    //               builder: (context) => const HistoryWallet(),
-                    //             ),
-                    //           );
-                    //         } else {
-                    //           Navigator.of(context).push(
-                    //             CupertinoPageRoute(
-                    //               builder: (context) => const Login(),
-                    //             ),
-                    //           );
-                    //         }
-                    //       },
-                    //     ),
-                    //     WIconSetting(
-                    //       title: "Funding Detail",
-                    //       color: Colors.blue,
-                    //       icon: CupertinoIcons.doc_text_search,
-                    //       onTap: () {
-                    //         if (listCustomer.isNotEmpty &&
-                    //             listCustomer[0]['image'] != null) {
-                    //           Navigator.of(context).push(
-                    //             CupertinoPageRoute(
-                    //               builder: (context) => const HistoryPoint(),
-                    //             ),
-                    //           );
-                    //         } else {
-                    //           Navigator.of(context).push(
-                    //             CupertinoPageRoute(
-                    //               builder: (context) => const Login(),
-                    //             ),
-                    //           );
-                    //         }
-                    //       },
-                    //     ),
-                    //   ],
-                    // ),
-                    // const SizedBox(
-                    //   height: 10,
-                    // ),
                     const Text(
                       "My Team",
                       style: TextStyle(fontWeight: FontWeight.bold),

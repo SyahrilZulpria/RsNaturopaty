@@ -17,6 +17,7 @@ class ArticleDiscover extends StatefulWidget {
 class _ArticleDiscoverState extends State<ArticleDiscover> {
   List<Map<String, dynamic>> subCategoryArticle = [];
   List itemArticle = [];
+  int tabLength = 0;
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class _ArticleDiscoverState extends State<ArticleDiscover> {
         final List<dynamic> subCategory = responseJson['content']['result'];
         setState(() {
           subCategoryArticle = subCategory.cast<Map<String, dynamic>>();
+          tabLength = subCategoryArticle.length;
         });
       } else {
         CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
@@ -74,8 +76,8 @@ class _ArticleDiscoverState extends State<ArticleDiscover> {
         setState(() {
           itemArticle = List.from(contentArticle);
         });
-        print("============ TEST =================");
-        print(itemArticle);
+        //print("============ TEST =================");
+        //print(itemArticle);
       } else {
         CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
         print('Login failed with status code: ${response.statusCode}');
@@ -88,7 +90,7 @@ class _ArticleDiscoverState extends State<ArticleDiscover> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: subCategoryArticle.length,
+      length: tabLength,
       initialIndex: 0,
       child: Scaffold(
         appBar: AppBar(
@@ -99,13 +101,6 @@ class _ArticleDiscoverState extends State<ArticleDiscover> {
           centerTitle: true,
           backgroundColor: Colors.purple,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            color: Colors.white,
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
         ),
         body: ListView(
           padding: EdgeInsets.zero,

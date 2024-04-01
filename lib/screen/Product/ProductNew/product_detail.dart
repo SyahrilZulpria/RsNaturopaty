@@ -219,12 +219,12 @@ class _ProductDetailState extends State<ProductDetail> {
           ProductImagesHead(imageUrl: productData['image'].toString()),
           Container(
             padding: const EdgeInsets.all(20),
-            decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
                 ),
-                color: Colors.green),
+                color: Colors.grey[400]),
             child: Column(
               children: [
                 const SizedBox(height: 20),

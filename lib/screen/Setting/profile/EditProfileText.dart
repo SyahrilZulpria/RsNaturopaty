@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:http/http.dart' as http;
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum EditType {
   Name,
@@ -12,7 +13,6 @@ enum EditType {
   Instagram,
   Profession,
   Organization,
-  // Tambahkan jenis data lain yang ingin diedit di sini
 }
 
 class EditDataPage extends StatefulWidget {
@@ -39,15 +39,27 @@ class _EditDataPageState extends State<EditDataPage> {
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.currentValue);
+    getSharedPref();
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  // @override
+  // void dispose() {
+  //   _controller.dispose();
+  //   super.dispose();
+  //   getSharedPref();
+  // }
+
+  getSharedPref() async {
+    final sp = await SharedPreferences.getInstance();
+
+    setState(() {
+      token = sp.getString("token")!;
+    });
   }
 
   submitUpdateCustomer() async {
+    print("======= Post =======");
+    print(_controller);
     try {
       final response = await http
           .post(Uri.parse(Endpoint.uodateCustomer), headers: <String, String>{
@@ -66,13 +78,18 @@ class _EditDataPageState extends State<EditDataPage> {
         "cdistrict": "0",
         "tzip": widget.data['zip'].toString(),
         "tnpwp": widget.data['npwp'].toString(),
-        "twebsite": widget.editType == EditType.Website ? _controller.text : '',
-        "tinstagram":
-            widget.editType == EditType.Instagram ? _controller.text : '',
-        "tprofession":
-            widget.editType == EditType.Profession ? _controller.text : '',
-        "torganization":
-            widget.editType == EditType.Organization ? _controller.text : '',
+        "twebsite": widget.editType == EditType.Website
+            ? _controller.text
+            : widget.data['website'].toString(),
+        "tinstagram": widget.editType == EditType.Instagram
+            ? _controller.text
+            : widget.data['instagram'].toString(),
+        "tprofession": widget.editType == EditType.Profession
+            ? _controller.text
+            : widget.data['profession'].toString(),
+        "torganization": widget.editType == EditType.Organization
+            ? _controller.text
+            : widget.data['organization'].toString(),
         "taccname": widget.data['acc_name'].toString(),
         "taccno": widget.data['acc_no'].toString(),
         "taccbank": widget.data['acc_bank'].toString(),
@@ -83,9 +100,8 @@ class _EditDataPageState extends State<EditDataPage> {
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
         print(responseJson);
-        Navigator.of(context).pop();
         CustomDialog().dialogSuksesMultiplePop(
-            context, "Berhasil Melakukan Edit Data", 2);
+            context, "Berhasil Melakukan Edit Data", 1);
       } else if (response.statusCode == 400) {
         // Bad request, handle the error response
         final Map<String, dynamic> responseJson = json.decode(response.body);

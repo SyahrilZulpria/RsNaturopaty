@@ -25,6 +25,8 @@ class _CheckoutViewState extends State<CheckoutView> {
   String token = "";
   String? selectedPaymentMethod;
   List<String> paymentMethods = [];
+  Map<String, dynamic> dataSales = {};
+  List dataContentSales = [];
 
   @override
   void initState() {
@@ -38,6 +40,7 @@ class _CheckoutViewState extends State<CheckoutView> {
       token = sp.getString("token")!;
     });
     fetchPaymentMethods();
+    salesGetData();
   }
 
   fetchPaymentMethods() async {
@@ -65,6 +68,40 @@ class _CheckoutViewState extends State<CheckoutView> {
     } catch (error) {
       // Handle error in API call
       print('Error fetching payment methods: $error');
+    }
+  }
+
+  salesGetData() async {
+    print(Endpoint.getTransactionDetail + widget.salesId);
+    try {
+      final response = await http.get(
+        Uri.parse(Endpoint.getTransactionDetail + widget.salesId),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'X-auth-token': token,
+        },
+      ).timeout(const Duration(seconds: 60));
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseData = json.decode(response.body);
+        print('json print');
+        print(responseData);
+        print("==== data product ====");
+        print(responseData['content']['items']);
+        setState(() {
+          dataSales = responseData['content'];
+          dataContentSales = responseData['content']['items'];
+        });
+        print("======== Set state 1 =======");
+        print(dataSales);
+        print("======== Set state 2 =======");
+        print(dataContentSales);
+      } else {
+        // Jika panggilan API gagal, tangani kesalahan
+        throw Exception(
+            'Failed to load payment methods: ${response.statusCode}');
+      }
+    } catch (e) {
+      CustomDialog().warning(context, '', e.toString());
     }
   }
 
@@ -189,29 +226,31 @@ class _CheckoutViewState extends State<CheckoutView> {
             ),
           ),
           const Divider(color: Colors.grey, height: 1),
-          const CheckoutRowViwe(
+          CheckoutRowViwe(
             title: "Product",
-            value: "Name Product",
+            value: dataContentSales.isNotEmpty
+                ? dataContentSales[0]['product'].toString()
+                : '',
           ),
           const Divider(color: Colors.grey, height: 1),
-          const CheckoutRowViwe(
+          CheckoutRowViwe(
             title: "Total",
-            value: "Price Product",
+            value: dataSales['total'].toString(),
           ),
           const Divider(color: Colors.grey, height: 1),
-          const CheckoutRowViwe(
+          CheckoutRowViwe(
             title: "Tax",
-            value: "Tax Product",
+            value: dataSales['tax'].toString(),
           ),
           const Divider(color: Colors.grey, height: 1),
-          const CheckoutRowViwe(
+          CheckoutRowViwe(
             title: "Discount",
-            value: "Discount Product",
+            value: dataSales['discount'].toString(),
           ),
           const Divider(color: Colors.grey, height: 1),
-          const CheckoutRowViwe(
+          CheckoutRowViwe(
             title: "Amount",
-            value: "Amount Product",
+            value: dataSales['amount'].toString(),
           ),
           const Divider(color: Colors.grey, height: 1),
           Padding(

@@ -14,7 +14,7 @@ class _AbaoutAsPageState extends State<AbaoutAsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "About US",
+          "About us",
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.purple,
@@ -111,7 +111,7 @@ class AboutImagesHead extends StatelessWidget {
                 backgroundColor: Colors.black.withOpacity(0.5),
                 children: const [
                   Text(
-                    "About US",
+                    "About us",
                     style: TextStyle(color: Colors.white),
                   )
                 ],

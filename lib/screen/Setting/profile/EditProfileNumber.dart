@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:http/http.dart' as http;
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum EditNumberType {
   NPWP,
@@ -37,15 +38,26 @@ class _EditDataNumberPageState extends State<EditDataNumberPage> {
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.currentValue);
+    getSharedPref();
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  // @override
+  // void dispose() {
+  //   _controller.dispose();
+  //   super.dispose();
+  //   getSharedPref();
+  // }
+
+  getSharedPref() async {
+    final sp = await SharedPreferences.getInstance();
+    setState(() {
+      token = sp.getString("token")!;
+    });
   }
 
   submitUpdateCustomer() async {
+    print("======= Post =======");
+    print(_controller);
     try {
       final response = await http
           .post(Uri.parse(Endpoint.uodateCustomer), headers: <String, String>{
@@ -58,11 +70,12 @@ class _EditDataNumberPageState extends State<EditDataNumberPage> {
         "taddress": widget.data['address'].toString(),
         "ccity": widget.data['city'].toString(),
         "cdistrict": "0",
-        "tzip":
-            widget.editNumberType == EditNumberType.ZIP ? _controller.text : '',
+        "tzip": widget.editNumberType == EditNumberType.ZIP
+            ? _controller.text
+            : widget.data['zip'].toString(),
         "tnpwp": widget.editNumberType == EditNumberType.NPWP
             ? _controller.text
-            : '',
+            : widget.data['npwp'].toString(),
         "twebsite": widget.data['website'].toString(),
         "tinstagram": widget.data['instagram'].toString(),
         "tprofession": widget.data['profession'].toString(),
@@ -71,15 +84,15 @@ class _EditDataNumberPageState extends State<EditDataNumberPage> {
         "taccno": widget.data['acc_no'].toString(),
         "taccbank": widget.data['acc_bank'].toString(),
       }).timeout(const Duration(seconds: 60));
+      print(response.statusCode);
       if (response.statusCode == 200) {
         print('API request successful');
         print(response.body);
         final Map<String, dynamic> responseJson =
             json.decode(response.body.toString());
         print(responseJson);
-        Navigator.of(context).pop();
         CustomDialog().dialogSuksesMultiplePop(
-            context, "Berhasil Melakukan Edit Data", 2);
+            context, "Berhasil Melakukan Edit Data", 1);
       } else if (response.statusCode == 400) {
         // Bad request, handle the error response
         final Map<String, dynamic> responseJson = json.decode(response.body);
