@@ -22,6 +22,7 @@ class _ArticleDiscoverState extends State<ArticleDiscover> {
   @override
   void initState() {
     super.initState();
+
     getCategoryArticle();
   }
 
@@ -45,6 +46,7 @@ class _ArticleDiscoverState extends State<ArticleDiscover> {
         setState(() {
           subCategoryArticle = subCategory.cast<Map<String, dynamic>>();
           tabLength = subCategoryArticle.length;
+          getArticleForInitialCategory(); // call getArticleForInitialCategory after setting subCategoryArticle
         });
       } else {
         CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
@@ -52,6 +54,13 @@ class _ArticleDiscoverState extends State<ArticleDiscover> {
       }
     } catch (e) {
       CustomDialog().warning(context, '', e.toString());
+    }
+  }
+
+  Future<void> getArticleForInitialCategory() async {
+    if (subCategoryArticle.isNotEmpty) {
+      int initialCategoryId = subCategoryArticle.first['id'];
+      await getArticle(initialCategoryId);
     }
   }
 
@@ -108,13 +117,21 @@ class _ArticleDiscoverState extends State<ArticleDiscover> {
             Column(
               children: [
                 const SizedBox(height: 20),
-                CategoryArticle(
-                  subCategoryArticle: subCategoryArticle,
-                  onCategorySelected: (categoryId) async {
-                    await getArticle(categoryId);
-                  },
-                  itemArticle: itemArticle,
-                )
+                if (subCategoryArticle.isNotEmpty)
+                  CategoryArticle(
+                    subCategoryArticle: subCategoryArticle,
+                    onCategorySelected: (categoryId) async {
+                      await getArticle(categoryId);
+                    },
+                    itemArticle: itemArticle,
+                  ),
+                // CategoryArticle(
+                //   subCategoryArticle: subCategoryArticle,
+                //   onCategorySelected: (categoryId) async {
+                //     await getArticle(categoryId);
+                //   },
+                //   itemArticle: itemArticle,
+                // )
               ],
             )
           ],
@@ -141,6 +158,8 @@ class CategoryArticle extends StatefulWidget {
 
 class _CategoryArticleState extends State<CategoryArticle> {
   int _selectedCategoryId = -1;
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -152,7 +171,8 @@ class _CategoryArticleState extends State<CategoryArticle> {
               .map(
                 (category) => Tab(
                   icon: Text(
-                    category['name'],
+                    category['name'][0].toUpperCase() +
+                        category['name'].substring(1),
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold),
                   ),
@@ -164,14 +184,21 @@ class _CategoryArticleState extends State<CategoryArticle> {
               _selectedCategoryId = widget.subCategoryArticle[index]['id'];
               print("======== TAP Kedua Cek ID =========");
               print(_selectedCategoryId);
+              isLoading = true;
             });
             widget.onCategorySelected(_selectedCategoryId);
+            setState(() {
+              isLoading = false;
+            });
           },
         ),
         SizedBox(
           height: MediaQuery.of(context).size.height,
-          child: widget.itemArticle.isNotEmpty
-              ? TabBarView(
+          child: isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : TabBarView(
                   children: [
                     ListView.builder(
                       shrinkWrap: true,
@@ -235,9 +262,6 @@ class _CategoryArticleState extends State<CategoryArticle> {
                       }),
                     ),
                   ],
-                )
-              : const Center(
-                  child: CircularProgressIndicator(),
                 ),
         )
       ],

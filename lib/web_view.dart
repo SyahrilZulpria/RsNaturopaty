@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:rsnaturopaty/screen/Product/ProductNew/TransactionCheckout.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:rsnaturopaty/screen/Product/history_transaction.dart';
@@ -79,7 +80,10 @@ class _WebViewPageState extends State<WebViewPage> {
           // Jika paid_date terisi, navigasikan ke halaman TestingDataPost
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const HistoryTransaction()),
+            MaterialPageRoute(
+              builder: (context) => const TransactionCheckout(),
+              //const HistoryTransaction(),
+            ),
           );
           iframe?.remove();
           _timer.cancel(); // Hentikan timer setelah navigasi

@@ -45,6 +45,7 @@ class _ArticleDiscoverViewState extends State<ArticleDiscoverView> {
         setState(() {
           subCategoryArticle = subCategory.cast<Map<String, dynamic>>();
           tabLength = subCategoryArticle.length;
+          getArticleForInitialCategory();
         });
       } else {
         CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
@@ -52,6 +53,13 @@ class _ArticleDiscoverViewState extends State<ArticleDiscoverView> {
       }
     } catch (e) {
       CustomDialog().warning(context, '', e.toString());
+    }
+  }
+
+  Future<void> getArticleForInitialCategory() async {
+    if (subCategoryArticle.isNotEmpty) {
+      int initialCategoryId = subCategoryArticle.first['id'];
+      await getArticle(initialCategoryId);
     }
   }
 
@@ -115,13 +123,21 @@ class _ArticleDiscoverViewState extends State<ArticleDiscoverView> {
             Column(
               children: [
                 const SizedBox(height: 20),
-                CategoryArticle(
-                  subCategoryArticle: subCategoryArticle,
-                  onCategorySelected: (categoryId) async {
-                    await getArticle(categoryId);
-                  },
-                  itemArticle: itemArticle,
-                )
+                if (subCategoryArticle.isNotEmpty)
+                  CategoryArticle(
+                    subCategoryArticle: subCategoryArticle,
+                    onCategorySelected: (categoryId) async {
+                      await getArticle(categoryId);
+                    },
+                    itemArticle: itemArticle,
+                  ),
+                // CategoryArticle(
+                //   subCategoryArticle: subCategoryArticle,
+                //   onCategorySelected: (categoryId) async {
+                //     await getArticle(categoryId);
+                //   },
+                //   itemArticle: itemArticle,
+                // )
               ],
             )
           ],
@@ -177,76 +193,70 @@ class _CategoryArticleState extends State<CategoryArticle> {
         ),
         SizedBox(
           height: MediaQuery.of(context).size.height,
-          child: widget.itemArticle.isNotEmpty
-              ? TabBarView(
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: widget.itemArticle.length,
-                      itemBuilder: ((context, index) {
-                        final articleData = widget.itemArticle[index];
-                        return InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (context) => PagesArticle(
-                                  permaLink:
-                                      articleData['permalink'].toString(),
-                                ),
-                              ),
-                            );
-                            print("Open Article In Discover");
-                          },
-                          child: Row(
+          child: TabBarView(
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: widget.itemArticle.length,
+                itemBuilder: ((context, index) {
+                  final articleData = widget.itemArticle[index];
+                  return InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (context) => PagesArticle(
+                            permaLink: articleData['permalink'].toString(),
+                          ),
+                        ),
+                      );
+                      print("Open Article In Discover");
+                    },
+                    child: Row(
+                      children: [
+                        ImagesContainer(
+                          width: 80,
+                          height: 80,
+                          margin: const EdgeInsets.all(10.0),
+                          borderRadius: 5,
+                          imageUrl: articleData['image'],
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              ImagesContainer(
-                                width: 80,
-                                height: 80,
-                                margin: const EdgeInsets.all(10.0),
-                                borderRadius: 5,
-                                imageUrl: articleData['image'],
+                              Text(
+                                articleData['name'],
+                                maxLines: 2,
+                                overflow: TextOverflow.clip,
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
                               ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      articleData['name'],
-                                      maxLines: 2,
-                                      overflow: TextOverflow.clip,
-                                      style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.calendar_month_outlined,
-                                          size: 15,
-                                        ),
-                                        const SizedBox(width: 5),
-                                        Text(
-                                          articleData['date'],
-                                          style: const TextStyle(fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.calendar_month_outlined,
+                                    size: 15,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    articleData['date'],
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        );
-                      }),
+                        ),
+                      ],
                     ),
-                  ],
-                )
-              : const Center(
-                  child: CircularProgressIndicator(),
-                ),
-        )
+                  );
+                }),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

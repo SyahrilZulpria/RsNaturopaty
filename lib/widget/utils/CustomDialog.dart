@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rsnaturopaty/login.dart';
+import 'package:rsnaturopaty/screen/Setting/wallet_poiny/history_wallet.dart';
 import 'package:rsnaturopaty/verify.dart';
 import 'package:rsnaturopaty/widget/utils/Colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -273,6 +274,46 @@ class CustomDialog {
                   style: TextStyle(fontSize: 16, color: headerBackground)),
               onPressed: () {
                 Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void successWd(BuildContext context, String title, String desc) {
+    showDialog(
+      barrierDismissible: true,
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: title != ''
+              ? Text(title, style: const TextStyle(fontWeight: FontWeight.w700))
+              : const SizedBox(
+                  height: 0,
+                ),
+          content: Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Text(
+              desc,
+              style: const TextStyle(
+                color: Colors.black,
+                height: 1.4,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              child: const Text("Tutup",
+                  style: TextStyle(fontSize: 16, color: headerBackground)),
+              onPressed: () {
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => const HistoryWallet(),
+                  ),
+                );
               },
             ),
           ],

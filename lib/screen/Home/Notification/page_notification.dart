@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:rsnaturopaty/screen/Home/Notification/detail_notifikasi.dart';
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
+import 'package:rsnaturopaty/widget/utils/NavBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationPages extends StatefulWidget {
@@ -18,7 +19,7 @@ class NotificationPages extends StatefulWidget {
 class _NotificationPagesState extends State<NotificationPages> {
   String token = "";
   List notifications = [];
-  int _page = 1;
+  int _page = 0;
   bool _isLoading = false;
   final ScrollController _scrollController = ScrollController();
 
@@ -69,6 +70,37 @@ class _NotificationPagesState extends State<NotificationPages> {
     }
   }
 
+  notificationDetail(String id) async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      final response = await http.get(
+        Uri.parse(Endpoint.getDetailNotification + id),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'X-auth-token': token,
+        },
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseJson =
+            json.decode(response.body.toString());
+        print(responseJson);
+        CustomDialog().warning(context, '', 'Notification has been read');
+        // setState(() {
+        //   _isLoading = false;
+        // Setelah mendapatkan detail notifikasi, set isLoading ke false
+        // });
+        // await notification();
+        // setState(() {
+        //   detailNotif = responseJson['content'];
+        // });
+      }
+    } catch (e) {
+      CustomDialog().warning(context, '', e.toString());
+    }
+  }
+
   void _scrollListener() {
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
@@ -85,8 +117,18 @@ class _NotificationPagesState extends State<NotificationPages> {
           "Notification",
           style: TextStyle(color: Colors.white),
         ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => const NavCustomButton(),
+              ),
+            );
+          },
+        ),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.purple,
       ),
       body: ListView.builder(
@@ -97,13 +139,14 @@ class _NotificationPagesState extends State<NotificationPages> {
             final bool isRead = item['reading'] == '1';
             return InkWell(
               onTap: () {
-                Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) => DetailNotifikasi(
-                      notifId: item['id'].toString(),
-                    ),
-                  ),
-                );
+                notificationDetail(item['id'].toString());
+                // Navigator.of(context).push(
+                //   CupertinoPageRoute(
+                //     builder: (context) => DetailNotifikasi(
+                //       notifId: item['id'].toString(),
+                //     ),
+                //   ),
+                // );
                 print(item['id']);
               },
               child: Column(

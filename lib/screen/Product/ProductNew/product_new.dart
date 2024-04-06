@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:http/http.dart' as http;
 import 'package:rsnaturopaty/screen/Product/ProductNew/product_detail.dart';
@@ -62,6 +63,7 @@ class _ProductNewState extends State<ProductNew> {
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
+        automaticallyImplyLeading: false,
         //iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.purple,
       ),
@@ -108,10 +110,11 @@ class _ProductNewState extends State<ProductNew> {
                                   ),
                                   const SizedBox(height: 5),
                                   Text(
-                                    productList[index]['price'].toString(),
-                                    // productList[index]['price'] != null
-                                    //     ? productList[index]['price'].toString()
-                                    //     : '0',
+                                    NumberFormat.decimalPattern().format(
+                                      int.parse(
+                                        productList[index]['price'].toString(),
+                                      ),
+                                    ),
                                     style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700),

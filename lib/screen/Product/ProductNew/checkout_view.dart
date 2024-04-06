@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
+import 'package:rsnaturopaty/screen/Product/ProductNew/TransactionCheckout.dart';
 import 'package:rsnaturopaty/screen/Product/ProductNew/checkout_row.dart';
 import 'package:rsnaturopaty/web_view.dart';
 import 'package:rsnaturopaty/widget/button_widget/ButtonOval.dart';
@@ -27,6 +29,15 @@ class _CheckoutViewState extends State<CheckoutView> {
   List<String> paymentMethods = [];
   Map<String, dynamic> dataSales = {};
   List dataContentSales = [];
+  bool isLoading = false;
+
+  Future<void> _showLoadingWithDelay() async {
+    // Menunggu 3 detik sebelum menampilkan data
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      isLoading = false; // Set isLoading to false after delay
+    });
+  }
 
   @override
   void initState() {
@@ -40,6 +51,7 @@ class _CheckoutViewState extends State<CheckoutView> {
       token = sp.getString("token")!;
     });
     fetchPaymentMethods();
+    _showLoadingWithDelay();
     salesGetData();
   }
 
@@ -72,6 +84,9 @@ class _CheckoutViewState extends State<CheckoutView> {
   }
 
   salesGetData() async {
+    setState(() {
+      isLoading = true; // Set isLoading true when fetching data
+    });
     print(Endpoint.getTransactionDetail + widget.salesId);
     try {
       final response = await http.get(
@@ -101,6 +116,9 @@ class _CheckoutViewState extends State<CheckoutView> {
             'Failed to load payment methods: ${response.statusCode}');
       }
     } catch (e) {
+      setState(() {
+        isLoading = false; // Set isLoading false when error occurred
+      });
       CustomDialog().warning(context, '', e.toString());
     }
   }
@@ -142,6 +160,7 @@ class _CheckoutViewState extends State<CheckoutView> {
 
   chackoutSales() async {
     print("=========== Get Checkout Data ============");
+    print('${Endpoint.checkoutProduct}${widget.salesId}');
     try {
       final response = await http.get(
           Uri.parse('${Endpoint.checkoutProduct}${widget.salesId}'),
@@ -179,7 +198,14 @@ class _CheckoutViewState extends State<CheckoutView> {
             json.decode(response.body.toString());
         String errorMessage = errorJson["error"];
         CustomDialog().warning(context, '', errorMessage);
-        //  print('Login failed: $errorMessage');
+        await Future.delayed(const Duration(seconds: 5));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const TransactionCheckout(),
+          ),
+        );
+        //  print('Login failed: $errorMessage');110
         //  print('Login failed with status code: ${response.statusCode}');
       } else {
         print("Error Checkout status code: ${response.statusCode}");
@@ -191,114 +217,137 @@ class _CheckoutViewState extends State<CheckoutView> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Checkout",
-                  style: TextStyle(
-                      color: Colors.purple,
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Image.asset(
-                    "assets/close.png",
-                    width: 15,
-                    height: 15,
+    return SingleChildScrollView(
+      child: isLoading // Check if isLoading is true
+          ? Container(
+              color: Colors.white,
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: const Center(
+                child: CircularProgressIndicator(color: Colors.blue),
+              ),
+            )
+          : Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Checkout",
+                          style: TextStyle(
+                              color: Colors.purple,
+                              fontSize: 28,
+                              fontWeight: FontWeight.w700),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Image.asset(
+                            "assets/close.png",
+                            width: 15,
+                            height: 15,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          const Divider(color: Colors.grey, height: 1),
-          CheckoutRowViwe(
-            title: "Product",
-            value: dataContentSales.isNotEmpty
-                ? dataContentSales[0]['product'].toString()
-                : '',
-          ),
-          const Divider(color: Colors.grey, height: 1),
-          CheckoutRowViwe(
-            title: "Total",
-            value: dataSales['total'].toString(),
-          ),
-          const Divider(color: Colors.grey, height: 1),
-          CheckoutRowViwe(
-            title: "Tax",
-            value: dataSales['tax'].toString(),
-          ),
-          const Divider(color: Colors.grey, height: 1),
-          CheckoutRowViwe(
-            title: "Discount",
-            value: dataSales['discount'].toString(),
-          ),
-          const Divider(color: Colors.grey, height: 1),
-          CheckoutRowViwe(
-            title: "Amount",
-            value: dataSales['amount'].toString(),
-          ),
-          const Divider(color: Colors.grey, height: 1),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Row(
-              children: [
-                const Text(
-                  "Payment",
-                  style: TextStyle(
-                    color: darkGrey,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  const Divider(color: Colors.grey, height: 1),
+                  CheckoutRowViwe(
+                    title: "Product",
+                    value: dataContentSales.isNotEmpty
+                        ? dataContentSales[0]['product'].toString()
+                        : '',
                   ),
-                ),
-                const Spacer(),
-                DropdownButton<String>(
-                  value: selectedPaymentMethod,
-                  onChanged: (String? newValue) {
-                    setState(
-                      () {
-                        selectedPaymentMethod = newValue;
-                        print(selectedPaymentMethod);
-                        salesUpdateItem();
-                      },
-                    );
-                  },
-                  items: paymentMethods.map<DropdownMenuItem<String>>(
-                    (String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
+                  const Divider(color: Colors.grey, height: 1),
+                  CheckoutRowViwe(
+                    title: "Total",
+                    value: NumberFormat.decimalPattern().format(
+                      int.parse(
+                        dataSales['total'].toString(),
+                      ),
+                    ),
+                  ),
+                  const Divider(color: Colors.grey, height: 1),
+                  CheckoutRowViwe(
+                    title: "Tax",
+                    value: NumberFormat.decimalPattern().format(
+                      int.parse(
+                        dataSales['tax'].toString(),
+                      ),
+                    ),
+                  ),
+                  const Divider(color: Colors.grey, height: 1),
+                  CheckoutRowViwe(
+                    title: "Discount",
+                    value: dataSales['discount'].toString(),
+                  ),
+                  const Divider(color: Colors.grey, height: 1),
+                  CheckoutRowViwe(
+                    title: "Amount",
+                    value: NumberFormat.decimalPattern().format(
+                      int.parse(
+                        dataSales['amount'].toString(),
+                      ),
+                    ),
+                  ),
+                  const Divider(color: Colors.grey, height: 1),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      children: [
+                        const Text(
+                          "Payment",
+                          style: TextStyle(
+                            color: darkGrey,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const Spacer(),
+                        DropdownButton<String>(
+                          value: selectedPaymentMethod,
+                          onChanged: (String? newValue) {
+                            setState(
+                              () {
+                                selectedPaymentMethod = newValue;
+                                print(selectedPaymentMethod);
+                                salesUpdateItem();
+                              },
+                            );
+                          },
+                          items: paymentMethods.map<DropdownMenuItem<String>>(
+                            (String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            },
+                          ).toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(color: Colors.grey, height: 1),
+                  const SizedBox(height: 5),
+                  RoundButton(
+                    title: "Place Order",
+                    onPressed: () {
+                      chackoutSales();
                     },
-                  ).toList(),
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          const Divider(color: Colors.grey, height: 1),
-          const SizedBox(height: 5),
-          RoundButton(
-            title: "Place Order",
-            onPressed: () {
-              chackoutSales();
-            },
-          ),
-        ],
-      ),
     );
   }
 }

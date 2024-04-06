@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
+import 'package:rsnaturopaty/login.dart';
 import 'package:rsnaturopaty/widget/button_widget/ButtonOval.dart';
 import 'package:rsnaturopaty/widget/utils/Colors.dart';
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
@@ -124,14 +125,14 @@ class _VerifyPagesState extends State<VerifyPages> {
             json.decode(response.body.toString());
 
         print(responseJson);
-        setState(() {
-          dataCustomer = responseJson['content'];
-        });
+        // Navigator.of(context).pushReplacement(
+        //     CupertinoPageRoute(builder: (context) => const Login()));
+        // setState(() {
+        //   dataCustomer = responseJson['content'];
+        // });
         print("========================");
         print(dataCustomer);
         print("========================");
-
-        Navigator.of(context).pop();
         CustomDialog().dialogSuksesMultiplePop(
             context, "Successful Account Verification", 1);
       }
@@ -257,7 +258,12 @@ class _VerifyPagesState extends State<VerifyPages> {
                                       50), // Ubah bentuk tombol
                                 ),
                               ),
-                              child: const Text('Request OTP')),
+                              child: const Text(
+                                'Request OTP',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
+                              )),
                         ),
                       ],
                     ),

@@ -18,6 +18,7 @@ class Endpoint {
   static String getPoint = '${ip}customer/point_ledger';
   static String upProfileImg = '${ip}customer/upload_image';
   static String getCustomer = '${ip}customer/get';
+  static String postRedeem = '${ip}customer/redeem';
 
   /// API Article
   static String categoryArticle = '${ip}article';
@@ -29,15 +30,20 @@ class Endpoint {
 
   /// API ORDER
   static String createdSalesAdd = '${ip}sales/add';
-  static String salesAddItem =
-      '${ip}sales/add_item/'; //get by : id dari sales add
-  static String salesUpdate = '${ip}sales/update/'; //get by : id dari sales add
-  static String checkoutProduct =
-      '${ip}sales/checkout/'; //get by : id dari sales add
+  static String salesAddItem = '${ip}sales/add_item/';
+  //get by : id dari sales add
+  static String salesUpdate = '${ip}sales/update/';
+  //get by : id dari sales add
+  static String checkoutProduct = '${ip}sales/checkout/';
+  //get by : id dari sales add
   static String getPaymentType = '${ip}payment';
-  static String getTransactionDetail =
-      '${ip}sales/get/'; //get by : id transction
+  static String getTransactionDetail = '${ip}sales/get/';
+  //get by : id transction
   static String getHistoryTransaction = '${ip}sales';
+
+  static String getListBonus = '${ip}sales/list_bonus_order';
+  static String setBonus = '${ip}sales/set_bonus_order/';
+  // setbonus order by /106/wallet id transaksi dan penentuan wallet atau point
 
   /// API REDEEM
 

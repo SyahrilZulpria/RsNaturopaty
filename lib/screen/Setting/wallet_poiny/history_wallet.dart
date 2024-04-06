@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:http/http.dart' as http;
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
+import 'package:rsnaturopaty/widget/utils/NavBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HistoryWallet extends StatefulWidget {
@@ -17,7 +19,8 @@ class HistoryWallet extends StatefulWidget {
 class _HistoryWalletState extends State<HistoryWallet> {
   String token = "";
   List customerWallet = [];
-  List historyWallet = [];
+  //List historyWallet = [];
+  List<dynamic>? historyWallet;
   bool _isLoading = false;
 
   @override
@@ -54,6 +57,10 @@ class _HistoryWalletState extends State<HistoryWallet> {
             json.decode(response.body.toString());
         final Map<String, dynamic> content = responseData['content'];
         final int balance = content['balance'];
+        print("=========");
+        print(content);
+        print("=========");
+        print(balance);
         setState(() {
           customerWallet = [balance.toString()];
           historyWallet = responseData['content']['result'];
@@ -81,7 +88,11 @@ class _HistoryWalletState extends State<HistoryWallet> {
           icon: const Icon(Icons.arrow_back),
           color: Colors.white,
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => const NavCustomButton(),
+              ),
+            );
           },
         ),
       ),
@@ -110,7 +121,8 @@ class _HistoryWalletState extends State<HistoryWallet> {
                             children: [
                               Text(
                                 customerWallet.isNotEmpty
-                                    ? "${customerWallet.first}"
+                                    ? NumberFormat.decimalPattern()
+                                        .format(int.parse(customerWallet.first))
                                     : "0",
                                 style: const TextStyle(
                                     fontSize: 25,
@@ -154,35 +166,50 @@ class _HistoryWalletState extends State<HistoryWallet> {
                 onTap: () {
                   print("object");
                 },
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: historyWallet.length,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        ListTile(
-                          title: Text(
-                            historyWallet[index]['code'].toString(),
-                            style: const TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            historyWallet[index]['date'].toString() +
-                                historyWallet[index]['time'].toString(),
-                            style: const TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.bold),
-                          ),
-                          trailing: Text(
-                            historyWallet[index]['amount'].toStringAsFixed(2),
-                            style: const TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.bold),
+                child: historyWallet == null || historyWallet!.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'Tidak ada Transaksi',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const Divider(),
-                      ],
-                    );
-                  },
-                ),
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: historyWallet!.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              ListTile(
+                                title: Text(
+                                  historyWallet![index]['code'].toString(),
+                                  style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Text(
+                                  historyWallet![index]['date'].toString() +
+                                      historyWallet![index]['time'].toString(),
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                trailing: Text(
+                                  NumberFormat.decimalPattern().format(
+                                    historyWallet![index]['amount'],
+                                  ),
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              const Divider(),
+                            ],
+                          );
+                        },
+                      ),
               ),
             ),
           ],

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
 import 'package:http/http.dart' as http;
@@ -16,7 +17,8 @@ class HistoryPoint extends StatefulWidget {
 class _HistoryPointState extends State<HistoryPoint> {
   String token = "";
   List customerPoint = [];
-  List historyPoint = [];
+  //List historyPoint = [];
+  List<dynamic>? historyPoint;
   bool _isLoading = false;
 
   @override
@@ -53,6 +55,10 @@ class _HistoryPointState extends State<HistoryPoint> {
             json.decode(response.body.toString());
         final Map<String, dynamic> content = responseData['content'];
         final int balance = content['balance'];
+        print("Point");
+        print(balance);
+        print("Point Content");
+        print(content);
         setState(() {
           customerPoint = [balance.toString()];
           historyPoint = responseData['content']['result'];
@@ -108,7 +114,8 @@ class _HistoryPointState extends State<HistoryPoint> {
                             children: [
                               Text(
                                 customerPoint.isNotEmpty
-                                    ? "${customerPoint.first}"
+                                    ? NumberFormat.decimalPattern()
+                                        .format(int.parse(customerPoint.first))
                                     : "0",
                                 style: const TextStyle(
                                     fontSize: 25,
@@ -148,39 +155,45 @@ class _HistoryPointState extends State<HistoryPoint> {
                   BoxShadow(color: Colors.grey.shade400, blurRadius: 3),
                 ],
               ),
-              child: historyPoint.isEmpty
-                  ? const Center(
-                      child: Text("No Transaction History"),
-                    )
-                  : GestureDetector(
-                      onTap: () {
-                        print("object");
-                      },
-                      child: ListView.builder(
+              child: GestureDetector(
+                onTap: () {
+                  print("object");
+                },
+                child: historyPoint == null || historyPoint!.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'Tidak ada Transaksi',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
                         shrinkWrap: true,
-                        itemCount: historyPoint.length,
+                        itemCount: historyPoint!.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Column(
                             children: [
                               ListTile(
                                 title: Text(
-                                  historyPoint[index]['code'].toString(),
+                                  historyPoint![index]['code'].toString(),
                                   style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 subtitle: Text(
-                                  historyPoint[index]['date'] ??
+                                  historyPoint![index]['date'] ??
                                       ' '.toString() +
-                                          historyPoint[index]['time'] ??
+                                          historyPoint![index]['time'] ??
                                       ' '.toString(),
                                   style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 trailing: Text(
-                                  historyPoint[index]['amount']
-                                      .toStringAsFixed(2),
+                                  NumberFormat.decimalPattern()
+                                      .format(historyPoint![index]['amount']),
                                   style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold),
@@ -191,7 +204,7 @@ class _HistoryPointState extends State<HistoryPoint> {
                           );
                         },
                       ),
-                    ),
+              ),
             ),
           ],
         ),

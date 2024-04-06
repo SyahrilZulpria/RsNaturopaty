@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:rsnaturopaty/login.dart';
 import 'package:rsnaturopaty/screen/Home/Article_pages/discover_article_view.dart';
@@ -313,7 +314,7 @@ class _HomePagesState extends State<HomePages> {
               child: Row(
                 children: [
                   const Text(
-                    "Hi... ",
+                    "Hi, ",
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -381,7 +382,10 @@ class _HomePagesState extends State<HomePages> {
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                listDompet.isNotEmpty ? listDompet.first : " 0",
+                                listDompet.isNotEmpty
+                                    ? NumberFormat.decimalPattern()
+                                        .format(int.parse(listDompet.first))
+                                    : " 0",
                                 style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
@@ -434,7 +438,8 @@ class _HomePagesState extends State<HomePages> {
                                   ),
                                   Text(
                                     listPoint.isNotEmpty
-                                        ? listPoint.first
+                                        ? NumberFormat.decimalPattern()
+                                            .format(int.parse(listPoint.first))
                                         : " 0",
                                     style: const TextStyle(
                                         fontSize: 18,

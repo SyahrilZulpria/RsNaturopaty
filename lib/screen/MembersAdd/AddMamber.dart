@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:rsnaturopaty/widget/utils/Colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddMembers extends StatefulWidget {
   const AddMembers({super.key});
@@ -10,6 +15,53 @@ class AddMembers extends StatefulWidget {
 }
 
 class _AddMembersState extends State<AddMembers> {
+  String token = "";
+  List listCustomer = [];
+  Map<String, dynamic> customerData = {};
+
+  @override
+  void initState() {
+    super.initState();
+    getSharedPref();
+  }
+
+  getSharedPref() async {
+    final sp = await SharedPreferences.getInstance();
+    setState(() {
+      token = sp.getString("token")!;
+    });
+    getDataCustomer();
+  }
+
+  getDataCustomer() async {
+    try {
+      final response = await http
+          .get(Uri.parse(Endpoint.getCustomer), headers: <String, String>{
+        //'Content-Type': 'application/json',
+        'X-auth-token': token,
+      }).timeout(const Duration(seconds: 60));
+      if (response.statusCode == 200) {
+        print('status code: ${response.statusCode}');
+        final Map<String, dynamic> responseJson =
+            json.decode(response.body.toString());
+
+        final Map<String, dynamic> dataCustomer = responseJson['content'];
+        print(dataCustomer);
+        setState(() {
+          listCustomer = [dataCustomer];
+          customerData = responseJson['content'];
+        });
+        // print("============Hasil Get data listCustomer===========");
+        // print(listCustomer);
+      } else {
+        //CustomDialog().warning(context, '', 'Error: ${response.reasonPhrase}');
+        print('Login failed with status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      //CustomDialog().warning(context, '', e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // var size = MediaQuery.of(context).size;
@@ -133,10 +185,17 @@ class _AddMembersState extends State<AddMembers> {
                           ),
                           const SizedBox(height: 80),
                           const SizedBox(height: 80),
-                          _buildCopyButton('534GGHFE3', '534GGHFE3'),
+                          _buildCopyButton(
+                              customerData['code'] ??
+                                  "Harap Login Terlebih dahulu",
+                              customerData['code'] ??
+                                  "Harap Login Terlebih dahulu"),
                           const SizedBox(height: 10),
-                          _buildCopyButton('http://m.rsnaturopaty.com',
-                              'http://m.rsnaturopaty.com'),
+                          // _buildCopyButton(
+                          //     customerData['url_referal'] ??
+                          //         "Harap Login Terlebih dahulu",
+                          //     customerData['url_referal'] ??
+                          //         "Harap Login Terlebih dahulu"),
                         ],
                       ),
                     ),

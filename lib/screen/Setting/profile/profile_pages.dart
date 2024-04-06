@@ -34,6 +34,12 @@ class _ProfilePageState extends State<ProfilePage> {
     getSharedPref();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    getSharedPref();
+  }
+
   Future<void> refreshData() async {
     await getDataCustomer();
   }
@@ -140,7 +146,6 @@ class _ProfilePageState extends State<ProfilePage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            // Panggil Navigator.pop(context) saat ikon kembali diklik
             Navigator.pop(context);
           },
         ),
@@ -402,14 +407,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 title: const Text('Photo Library'),
                 onTap: () {
                   _pickImage(ImageSource.gallery);
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text('Camera'),
-                onTap: () {
-                  _pickImage(ImageSource.camera);
                   Navigator.of(context).pop();
                 },
               ),
