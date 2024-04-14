@@ -163,7 +163,7 @@ class _ListBonusState extends State<ListBonus> {
               },
             )
           : const Center(
-              child: Text('Tidak Ada Transaksi'),
+              child: Text('No transactions'),
             ),
     );
   }

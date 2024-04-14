@@ -23,10 +23,15 @@ class Endpoint {
   /// API Article
   static String categoryArticle = '${ip}article';
   static String getArticleCategory = '${ip}article/get_category';
-  static String getArticlePermalink =
-      '${ip}article/get_by_permalink/'; //by : Promo1
+  static String getArticlePermalink = '${ip}article/get_by_permalink/';
+  //by : Promo1
 
   /// API POS
+  static String getTransactionPos = '${ip}pos/get/';
+  static String checkoutProductPos = '${ip}pos/checkout/';
+  static String createdAddProductPos = '${ip}pos/add';
+  static String AddItemProductPos = '${ip}pos/add_item/';
+  static String getHistoryProductPos = '${ip}pos';
 
   /// API ORDER
   static String createdSalesAdd = '${ip}sales/add';
@@ -53,8 +58,8 @@ class Endpoint {
 
   /// API Product
   static String getProductList = '${ip}product';
-  static String getProductDetail =
-      '${ip}product/get/'; // get by TRISS01/1 kode product
+  static String getProductDetail = '${ip}product/get/';
+  // get by TRISS01/1 kode product
 
   /// API ImageSlider
   static String imgSlider = '${ip}slider';

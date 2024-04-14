@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:rsnaturopaty/screen/Home/Article_pages/discover_article.dart';
 import 'package:rsnaturopaty/screen/Home/home_pages.dart';
 import 'package:rsnaturopaty/screen/MembersAdd/AddMamber.dart';
-import 'package:rsnaturopaty/screen/Product/ProductNew/TransactionCheckout.dart';
 import 'package:rsnaturopaty/screen/Product/ProductNew/product_new.dart';
 import 'package:rsnaturopaty/screen/Setting/SettingPages.dart';
 import 'package:rsnaturopaty/widget/utils/Colors.dart';
 
 class NavCustomButton extends StatefulWidget {
+  static const String routeName = '/signUp';
   const NavCustomButton({super.key});
 
   @override

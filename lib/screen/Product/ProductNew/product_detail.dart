@@ -35,6 +35,8 @@ class _ProductDetailState extends State<ProductDetail> {
   late Map<String, dynamic> productData = {};
   late Map<String, dynamic> transactionData = {};
 
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -69,6 +71,7 @@ class _ProductDetailState extends State<ProductDetail> {
         print(responseJson);
         setState(() {
           productData = json.decode(response.body)['content'];
+          isLoading = false;
         });
         print("========== Image ===========");
         print(productData['image'].toString());
@@ -156,6 +159,7 @@ class _ProductDetailState extends State<ProductDetail> {
         print('${response.statusCode}');
         final Map<String, dynamic> errorJson = json.decode(responseData);
         String errorMessage = errorJson["error"];
+        print(errorMessage);
         //CustomDialog().warning(context, '', errorMessage);
       } else {
         print("Error salesAddItem status code: ${response.statusCode}");
@@ -213,66 +217,71 @@ class _ProductDetailState extends State<ProductDetail> {
           },
         ),
       ),
-      body: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          ProductImagesHead(imageUrl: productData['image'].toString()),
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-                color: Colors.grey[400]),
-            child: Column(
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(color: Colors.blue),
+            )
+          : ListView(
+              padding: EdgeInsets.zero,
               children: [
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      productData.isNotEmpty
-                          ? productData['name'].toString().toUpperCase()
-                          : 'Name Not Available',
-                      style: const TextStyle(
-                          fontSize: 30, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 15),
-                Text(
-                  productData['description'].toString(),
-                  style: const TextStyle(fontSize: 15, color: Colors.black),
-                  textAlign: TextAlign.justify,
-                ),
-                const SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Tooltip(
-                      message: 'Add to Cart',
-                      child: ButtonOval(
-                        color: Colors.blue,
-                        label: "Checkout",
-                        onPressed: () async {
-                          await salesAdd();
-                          if (salesId != null && salesId!.isNotEmpty) {
-                            showCheckout();
-                          } else {
-                            // Zeigen Sie eine Fehlermeldung an oder nehmen Sie eine andere Aktion vor, wenn salesId leer ist.
-                            // Beispiel: ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sales ID is empty')));
-                          }
-                        },
+                ProductImagesHead(imageUrl: productData['image'].toString()),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
                       ),
-                    ),
-                  ],
-                ),
+                      color: Colors.grey[400]),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            productData.isNotEmpty
+                                ? productData['name'].toString().toUpperCase()
+                                : 'Name Not Available',
+                            style: const TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 15),
+                      Text(
+                        productData['description'].toString(),
+                        style:
+                            const TextStyle(fontSize: 15, color: Colors.black),
+                        textAlign: TextAlign.justify,
+                      ),
+                      const SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Tooltip(
+                            message: 'Add to Cart',
+                            child: ButtonOval(
+                              color: Colors.blue,
+                              label: "Checkout",
+                              onPressed: () async {
+                                await salesAdd();
+                                if (salesId != null && salesId!.isNotEmpty) {
+                                  showCheckout();
+                                } else {
+                                  // Zeigen Sie eine Fehlermeldung an oder nehmen Sie eine andere Aktion vor, wenn salesId leer ist.
+                                  // Beispiel: ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sales ID is empty')));
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
-          )
-        ],
-      ),
     );
   }
 

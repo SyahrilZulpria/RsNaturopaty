@@ -110,6 +110,7 @@ class _ArticleDiscoverState extends State<ArticleDiscover> {
           centerTitle: true,
           backgroundColor: Colors.purple,
           elevation: 0,
+          automaticallyImplyLeading: false,
         ),
         body: ListView(
           padding: EdgeInsets.zero,

@@ -132,7 +132,7 @@ class _HistoryWalletState extends State<HistoryWallet> {
                               const SizedBox(height: 5),
                               const Divider(),
                               const Text(
-                                "Saldo Ku",
+                                "Wallet",
                                 style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
@@ -169,7 +169,7 @@ class _HistoryWalletState extends State<HistoryWallet> {
                 child: historyWallet == null || historyWallet!.isEmpty
                     ? const Center(
                         child: Text(
-                          'Tidak ada Transaksi',
+                          'No transactions',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

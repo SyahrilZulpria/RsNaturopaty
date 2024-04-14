@@ -174,7 +174,7 @@ class _NewRedeemState extends State<NewRedeem> {
                                 const SizedBox(height: 5),
                                 const Divider(),
                                 const Text(
-                                  "Saldo Ku",
+                                  "Wallet",
                                   style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -192,8 +192,8 @@ class _NewRedeemState extends State<NewRedeem> {
               ),
               const SizedBox(height: 20.0),
               const Text(
-                'Pilih Jumlah Nominal',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                'Select Nominal Amount',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10.0),
               GridView.count(
@@ -264,7 +264,7 @@ class _NewRedeemState extends State<NewRedeem> {
                         color: Colors.white,
                       )
                     : const Text(
-                        'Withdraw',
+                        'Redeem',
                         style: TextStyle(color: Colors.white, fontSize: 15),
                       ),
               ),

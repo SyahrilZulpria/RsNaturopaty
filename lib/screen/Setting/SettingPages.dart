@@ -7,6 +7,8 @@ import 'package:rsnaturopaty/api/Endpoint.dart';
 import 'package:rsnaturopaty/login.dart';
 import 'package:rsnaturopaty/screen/Home/Kategory_Home/team_member.dart';
 import 'package:rsnaturopaty/screen/MembersAdd/AddMamber.dart';
+import 'package:rsnaturopaty/screen/MembersAdd/AddMemberSettings.dart';
+import 'package:rsnaturopaty/screen/Product/PosProduct/productposview.dart';
 import 'package:rsnaturopaty/screen/Product/ProductNew/TransactionCheckout.dart';
 import 'package:rsnaturopaty/screen/Setting/bank/pilihBank.dart';
 import 'package:rsnaturopaty/screen/Setting/profile/profile_pages.dart';
@@ -283,16 +285,18 @@ class _SettingPagesState extends State<SettingPages> {
                           child: Column(
                             children: [
                               Text(
-                                name.isNotEmpty ? name : "Guest",
+                                name = name.isNotEmpty
+                                    ? name[0].toUpperCase() + name.substring(1)
+                                    : "Guest",
                                 style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black),
                               ),
                               const SizedBox(height: 5),
-                              const Text(
-                                "Level",
-                                style: TextStyle(
+                              Text(
+                                listCustomer[0]['type'] ?? "-",
+                                style: const TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black),
@@ -308,7 +312,7 @@ class _SettingPagesState extends State<SettingPages> {
                       children: [
                         InkWell(
                           onTap: () {
-                            print("Saldo ku");
+                            print("Wallet");
                             if (listDompet.isNotEmpty) {
                               Navigator.of(context).push(
                                 CupertinoPageRoute(
@@ -326,7 +330,7 @@ class _SettingPagesState extends State<SettingPages> {
                           child: Column(
                             children: [
                               const Text(
-                                "Saldo Ku",
+                                "Wallet",
                                 style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
@@ -353,7 +357,7 @@ class _SettingPagesState extends State<SettingPages> {
                         ),
                         InkWell(
                           onTap: () {
-                            print("Point Ku");
+                            print("Point");
                             if (listPoint.isNotEmpty) {
                               Navigator.of(context).push(
                                 CupertinoPageRoute(
@@ -371,7 +375,7 @@ class _SettingPagesState extends State<SettingPages> {
                           child: Column(
                             children: [
                               const Text(
-                                "Point Ku",
+                                "Point",
                                 style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
@@ -409,10 +413,7 @@ class _SettingPagesState extends State<SettingPages> {
                 ),
               ),
             ),
-            Container(
-              height: 5,
-              color: Colors.grey,
-            ),
+            Container(height: 5, color: Colors.grey),
             Container(
               margin: const EdgeInsets.all(20),
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -432,9 +433,7 @@ class _SettingPagesState extends State<SettingPages> {
                       "My Team",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    const Divider(
-                      color: Colors.black,
-                    ),
+                    const Divider(color: Colors.black),
                     const SizedBox(height: 10),
                     Column(
                       children: [
@@ -447,7 +446,8 @@ class _SettingPagesState extends State<SettingPages> {
                                 listCustomer[0]['image'] != null) {
                               Navigator.of(context).push(
                                 CupertinoPageRoute(
-                                  builder: (context) => const AddMembers(),
+                                  builder: (context) =>
+                                      const AddMembersSeting(),
                                 ),
                               );
                             } else {
@@ -503,58 +503,61 @@ class _SettingPagesState extends State<SettingPages> {
                         }
                       },
                     ),
-                    //   WIconSetting(
-                    //   title: "Set Bonus",
-                    //   color: Colors.deepPurple,
-                    //   icon: CupertinoIcons.star_circle,
-                    //   onTap: () {
-                    //     if (listCustomer.isNotEmpty &&
-                    //         listCustomer[0]['image'] != null) {
-                    //       Navigator.of(context).push(
-                    //         CupertinoPageRoute(
-                    //           builder: (context) => const ListBonus(),
-                    //         ),
-                    //       );
-                    //     } else {
-                    //       Navigator.of(context).push(
-                    //         CupertinoPageRoute(
-                    //           builder: (context) => const Login(),
-                    //         ),
-                    //       );
-                    //     }
-                    //   },
-                    // ),
-                    //   WIconSetting(
-                    //   title: "Set Bonus",
-                    //   color: Colors.deepPurple,
-                    //   icon: CupertinoIcons.star_circle,
-                    //   onTap: () {
-                    //     if (listCustomer.isNotEmpty &&
-                    //         listCustomer[0]['image'] != null) {
-                    //       Navigator.of(context).push(
-                    //         CupertinoPageRoute(
-                    //           builder: (context) => const ListBonus(),
-                    //         ),
-                    //       );
-                    //     } else {
-                    //       Navigator.of(context).push(
-                    //         CupertinoPageRoute(
-                    //           builder: (context) => const Login(),
-                    //         ),
-                    //       );
-                    //     }
-                    //   },
-                    // ),
-                    const SizedBox(
-                      height: 10,
+                    const SizedBox(height: 10),
+                    const Text(
+                      "POS",
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
+                    const Divider(color: Colors.black),
+                    const SizedBox(height: 10),
+                    WIconSetting(
+                      title: "Product",
+                      color: Colors.orange,
+                      icon: CupertinoIcons.archivebox,
+                      onTap: () {
+                        if (listCustomer.isNotEmpty &&
+                            listCustomer[0]['image'] != null) {
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (context) => const ProductPosNew(),
+                            ),
+                          );
+                        } else {
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (context) => const Login(),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    WIconSetting(
+                      title: "History",
+                      color: Colors.green,
+                      icon: CupertinoIcons.doc_checkmark,
+                      onTap: () {
+                        if (listCustomer.isNotEmpty &&
+                            listCustomer[0]['image'] != null) {
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (context) => const ListBonus(),
+                            ),
+                          );
+                        } else {
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (context) => const Login(),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 10),
                     const Text(
                       "Settings",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    const Divider(
-                      color: Colors.black,
-                    ),
+                    const Divider(color: Colors.black),
                     const SizedBox(height: 10),
                     Column(
                       children: [

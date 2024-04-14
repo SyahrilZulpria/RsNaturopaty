@@ -16,6 +16,7 @@ import 'package:rsnaturopaty/widget/utils/NavBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
+  static const String routeName = '/login';
   const Login({super.key});
 
   @override

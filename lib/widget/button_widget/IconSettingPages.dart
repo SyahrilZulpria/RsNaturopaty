@@ -30,7 +30,7 @@ class WIconSetting extends StatelessWidget {
             ),
             child: Icon(
               icon,
-              color: Colors.black,
+              color: Colors.white,
             ),
           ),
           const SizedBox(width: 10),

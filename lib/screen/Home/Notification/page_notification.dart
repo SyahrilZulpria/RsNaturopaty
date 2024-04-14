@@ -18,21 +18,21 @@ class NotificationPages extends StatefulWidget {
 
 class _NotificationPagesState extends State<NotificationPages> {
   String token = "";
-  List notifications = [];
+  List dataNotif = [];
   int _page = 0;
   bool _isLoading = false;
-  final ScrollController _scrollController = ScrollController();
+  final scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     getSharedPref();
-    _scrollController.addListener(_scrollListener);
+    scrollController.addListener(_scrollListener);
   }
 
   @override
   void dispose() {
-    _scrollController.removeListener(_scrollListener);
+    scrollController.removeListener(_scrollListener);
     super.dispose();
   }
 
@@ -50,7 +50,7 @@ class _NotificationPagesState extends State<NotificationPages> {
         _isLoading = true;
       });
       var resBody =
-          '{	"type":"", "campaign":"", "read":"", "limit":"50", "offset":"(_page - 1) * 10"}';
+          '{"type":"", "campaign":"", "read":"", "limit":"100", "offset":"$_page"}';
       final response = await http.post(Uri.parse(Endpoint.getNotification),
           headers: <String, String>{
             'Content-Type': 'application/json',
@@ -59,10 +59,11 @@ class _NotificationPagesState extends State<NotificationPages> {
           body: resBody);
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
+        print("========== JUMLAH NOTIF ============");
+        print(responseData['content'].length);
+        final dataJson = responseData['content'] as List;
         setState(() {
-          notifications.addAll(responseData['content']);
-          _isLoading = false;
-          _page++;
+          dataNotif = dataNotif + dataJson;
         });
       }
     } catch (e) {
@@ -101,11 +102,18 @@ class _NotificationPagesState extends State<NotificationPages> {
     }
   }
 
-  void _scrollListener() {
-    if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange) {
-      notification();
+  Future<void> _scrollListener() async {
+    if (_isLoading) return;
+    if (scrollController.offset == scrollController.position.maxScrollExtent) {
+      //&&  !_scrollController.position.outOfRange
+      setState(() {
+        _isLoading = true;
+      });
+      _page = _page + 1;
+      await notification();
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -132,10 +140,12 @@ class _NotificationPagesState extends State<NotificationPages> {
         backgroundColor: Colors.purple,
       ),
       body: ListView.builder(
-        itemCount: notifications.length + (_isLoading ? 1 : 0),
+        padding: const EdgeInsets.all(10),
+        controller: scrollController,
+        itemCount: _isLoading ? dataNotif.length + 1 : dataNotif.length,
         itemBuilder: (context, index) {
-          if (index < notifications.length) {
-            final item = notifications[index];
+          if (index < dataNotif.length) {
+            final item = dataNotif[index];
             final bool isRead = item['reading'] == '1';
             return InkWell(
               onTap: () {
@@ -184,7 +194,6 @@ class _NotificationPagesState extends State<NotificationPages> {
             );
           }
         },
-        controller: _scrollController,
       ),
     );
   }

@@ -125,7 +125,7 @@ class _HistoryPointState extends State<HistoryPoint> {
                               const SizedBox(height: 5),
                               const Divider(),
                               const Text(
-                                "Point Ku",
+                                "Point",
                                 style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
@@ -162,7 +162,7 @@ class _HistoryPointState extends State<HistoryPoint> {
                 child: historyPoint == null || historyPoint!.isEmpty
                     ? const Center(
                         child: Text(
-                          'Tidak ada Transaksi',
+                          'No transactions',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

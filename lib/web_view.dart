@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:rsnaturopaty/screen/Product/ProductNew/TransactionCheckout.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
-import 'package:rsnaturopaty/screen/Product/history_transaction.dart';
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
 
 class WebViewPage extends StatefulWidget {
@@ -49,7 +48,6 @@ class _WebViewPageState extends State<WebViewPage> {
   void dispose() {
     super.dispose();
     _timer.cancel();
-    // Remove the iframe when disposing the widget
     iframe?.remove();
   }
 

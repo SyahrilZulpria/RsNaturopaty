@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rsnaturopaty/api/Endpoint.dart';
@@ -93,7 +94,14 @@ class _ProfilePageState extends State<ProfilePage> {
         Uri.parse(Endpoint.upProfileImg),
       );
       request.headers['X-auth-token'] = token;
-      request.fields['userfile'] = '';
+      //request.fields['userfile'] = _imageFile!.path;
+
+      if (_imageFile != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'userfile',
+          _imageFile!.path,
+        ));
+      }
 
       print("==================");
       print("========= Body Upload Image ==========");
@@ -121,15 +129,6 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     } catch (e) {
       //CustomDialog().warning(context, '', e.toString());
-    }
-  }
-
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(source: source);
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
     }
   }
 
@@ -175,29 +174,30 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(height: 10),
                       Stack(
                         children: [
-                          SizedBox(
-                            width: 120,
-                            height: 129,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(100),
-                              child: Image.network(""),
-                            ),
-                          ),
+                          _imageFile == null
+                              ? CircleAvatar(
+                                  radius: 64,
+                                  backgroundImage: NetworkImage(
+                                      listImage['image'].toString()),
+                                )
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(150.0),
+                                  child: Image.file(
+                                    _imageFile!,
+                                    height: 300.0,
+                                    width: 300.0,
+                                    fit: BoxFit.fill,
+                                  )),
                           Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              width: 35,
-                              height: 35,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  color: Colors.purple),
-                              child: const Icon(
-                                Icons.camera_alt_outlined,
-                                size: 20,
-                              ),
-                            ),
-                          )
+                              bottom: 0,
+                              left: 80,
+                              child: IconButton(
+                                onPressed: () {
+                                  print("get foto");
+                                  _showImagePicker(context);
+                                },
+                                icon: const Icon(Icons.photo_camera_outlined),
+                              ))
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -406,7 +406,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 leading: const Icon(Icons.photo_library),
                 title: const Text('Photo Library'),
                 onTap: () {
-                  _pickImage(ImageSource.gallery);
+                  _imgFromGallery();
                   Navigator.of(context).pop();
                 },
               ),
@@ -416,6 +416,26 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
   }
+
+  _imgFromGallery() async {
+    await picker
+        .pickImage(source: ImageSource.gallery, imageQuality: 50)
+        .then((value) {
+      if (value != null) {
+        _imageFile != (File(value.path));
+      }
+    });
+  }
+
+  // Future<void> _pickImage(ImageSource source) async {
+  //   final pickedFile = await picker.pickImage(source: source);
+  //   if (pickedFile != null) {
+  //     setState(() {
+  //       _imageFile = File(pickedFile.path);
+  //       uploadImageProfile();
+  //     });
+  //   }
+  // }
 
   void editDataPage(EditType editType) {
     String currentValue = '';

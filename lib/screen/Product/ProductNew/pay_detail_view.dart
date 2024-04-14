@@ -7,7 +7,6 @@ import 'package:rsnaturopaty/screen/Product/ProductNew/TransactionCheckout.dart'
 import 'package:rsnaturopaty/screen/Product/ProductNew/checkout_row.dart';
 import 'package:rsnaturopaty/web_view.dart';
 import 'package:rsnaturopaty/widget/button_widget/ButtonOval.dart';
-import 'package:rsnaturopaty/widget/utils/Colors.dart';
 import 'package:rsnaturopaty/widget/utils/CustomDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -54,34 +53,6 @@ class _PayDetailViewState extends State<PayDetailView> {
     _showLoadingWithDelay();
     salesGetData();
   }
-
-  // fetchPaymentMethods() async {
-  //   print(Endpoint.getPaymentType);
-  //   try {
-  //     final response = await http.get(
-  //       Uri.parse(Endpoint.getPaymentType),
-  //       headers: <String, String>{
-  //         'Content-Type': 'application/json',
-  //         'X-auth-token': token,
-  //       },
-  //     ).timeout(const Duration(seconds: 60));
-
-  //     if (response.statusCode == 200) {
-  //       Map<String, dynamic> responseData = json.decode(response.body);
-  //       List<dynamic> result = responseData['content']['result'];
-  //       setState(() {
-  //         paymentMethods = result.map<String>((item) => item['name']).toList();
-  //       });
-  //     } else {
-  //       // Jika panggilan API gagal, tangani kesalahan
-  //       throw Exception(
-  //           'Failed to load payment methods: ${response.statusCode}');
-  //     }
-  //   } catch (error) {
-  //     // Handle error in API call
-  //     print('Error fetching payment methods: $error');
-  //   }
-  // }
 
   salesGetData() async {
     setState(() {
@@ -205,8 +176,6 @@ class _PayDetailViewState extends State<PayDetailView> {
             builder: (context) => const TransactionCheckout(),
           ),
         );
-        //  print('Login failed: $errorMessage');110
-        //  print('Login failed with status code: ${response.statusCode}');
       } else {
         print("Error Checkout status code: ${response.statusCode}");
       }
@@ -223,8 +192,8 @@ class _PayDetailViewState extends State<PayDetailView> {
               color: Colors.white,
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              child: Center(
-                child: CircularProgressIndicator(color: colorPrimary),
+              child: const Center(
+                child: CircularProgressIndicator(color: Colors.blue),
               ),
             )
           : Container(

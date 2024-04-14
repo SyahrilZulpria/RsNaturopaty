@@ -28,7 +28,7 @@ class _ProductNewState extends State<ProductNew> {
     print(Endpoint.getProductList);
     try {
       var resBody =
-          '{ "limit": 30, "offset": 0, "orderby": "", "order": "asc", "pos":"0"}';
+          '{"limit": 30, "offset": 0, "orderby": "", "order": "asc", "pos":"0"}';
       final response = await http
           .post(Uri.parse(Endpoint.getProductList),
               headers: <String, String>{

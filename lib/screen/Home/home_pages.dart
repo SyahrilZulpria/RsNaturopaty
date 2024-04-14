@@ -12,6 +12,7 @@ import 'package:rsnaturopaty/screen/Home/Kategory_Home/about_as.dart';
 import 'package:rsnaturopaty/screen/Home/Kategory_Home/announcement.dart';
 import 'package:rsnaturopaty/screen/Home/Notification/page_notification.dart';
 import 'package:rsnaturopaty/screen/Home/Kategory_Home/team_member.dart';
+import 'package:rsnaturopaty/screen/Setting/profile/editProfile/editFotoProfile.dart';
 import 'package:rsnaturopaty/screen/Setting/wallet_poiny/history_point.dart';
 import 'package:rsnaturopaty/screen/Setting/wallet_poiny/history_wallet.dart';
 import 'package:rsnaturopaty/widget/utils/Colors.dart';
@@ -321,7 +322,9 @@ class _HomePagesState extends State<HomePages> {
                     ),
                   ),
                   Text(
-                    name.isNotEmpty ? name : "Guest",
+                    name = name.isNotEmpty
+                        ? name[0].toUpperCase() + name.substring(1)
+                        : "Guest",
                     style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -356,7 +359,7 @@ class _HomePagesState extends State<HomePages> {
                       children: [
                         InkWell(
                           onTap: () {
-                            print("Saldo ku");
+                            print("Wallet");
                             if (listDompet.isNotEmpty) {
                               Navigator.of(context).push(
                                 CupertinoPageRoute(
@@ -374,7 +377,7 @@ class _HomePagesState extends State<HomePages> {
                           child: Column(
                             children: [
                               const Text(
-                                "Saldo Ku",
+                                "Wallet",
                                 style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
@@ -401,7 +404,7 @@ class _HomePagesState extends State<HomePages> {
                         ),
                         InkWell(
                           onTap: () {
-                            print("Point Ku");
+                            print("Point");
                             if (listPoint.isNotEmpty) {
                               Navigator.of(context).push(
                                 CupertinoPageRoute(
@@ -419,7 +422,7 @@ class _HomePagesState extends State<HomePages> {
                           child: Column(
                             children: [
                               const Text(
-                                "Point Ku",
+                                "Point",
                                 style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
@@ -501,13 +504,21 @@ class _HomePagesState extends State<HomePages> {
                                   title: 'Team',
                                   icon: 'assets/icons/developers.png',
                                   onPressed: () {
-                                    Navigator.of(context).push(
-                                      CupertinoPageRoute(
-                                        builder: (context) =>
-                                            const MemberTeam(),
-                                      ),
-                                    );
-                                    print("Team");
+                                    if (listDompet.isNotEmpty) {
+                                      Navigator.of(context).push(
+                                        CupertinoPageRoute(
+                                          builder: (context) =>
+                                              const MemberTeam(),
+                                        ),
+                                      );
+                                      print("Team");
+                                    } else {
+                                      Navigator.of(context).push(
+                                        CupertinoPageRoute(
+                                          builder: (context) => const Login(),
+                                        ),
+                                      );
+                                    }
                                   },
                                 ),
                                 const SizedBox(width: 10),
@@ -524,6 +535,20 @@ class _HomePagesState extends State<HomePages> {
                                     print("Announcement");
                                   },
                                 ),
+                                // const SizedBox(width: 10),
+                                // WMenuKategori(
+                                //   title: 'tes foto',
+                                //   icon: 'assets/icons/announcement.png',
+                                //   onPressed: () {
+                                //     Navigator.of(context).push(
+                                //       CupertinoPageRoute(
+                                //         builder: (context) =>
+                                //             const EditFotoProfile(),
+                                //       ),
+                                //     );
+                                //     print("Announcement");
+                                //   },
+                                // ),
                                 const SizedBox(width: 10),
                                 WMenuKategori(
                                   title: 'About us',

@@ -30,6 +30,7 @@ class _CheckoutViewState extends State<CheckoutView> {
   Map<String, dynamic> dataSales = {};
   List dataContentSales = [];
   bool isLoading = false;
+  bool isLoadingSubmit = false;
 
   Future<void> _showLoadingWithDelay() async {
     // Menunggu 3 detik sebelum menampilkan data
@@ -141,11 +142,11 @@ class _CheckoutViewState extends State<CheckoutView> {
             'ccash': '0',
           }).timeout(const Duration(seconds: 60));
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseJson =
-            json.decode(response.body.toString());
-        print(responseJson);
-        //salesId = responseJson['content']['id'];
-        CustomDialog().warning(context, '', responseJson["content"].toString());
+        // final Map<String, dynamic> responseJson =
+        //     json.decode(response.body.toString());
+        // print(responseJson);
+        // //salesId = responseJson['content']['id'];
+        // CustomDialog().warning(context, '', responseJson["content"].toString());
       } else {
         print("Error salesUpdateItem status code: ${response.statusCode}");
         final Map<String, dynamic> errorJson =
@@ -161,6 +162,11 @@ class _CheckoutViewState extends State<CheckoutView> {
   chackoutSales() async {
     print("=========== Get Checkout Data ============");
     print('${Endpoint.checkoutProduct}${widget.salesId}');
+
+    setState(() {
+      isLoadingSubmit = true;
+    });
+
     try {
       final response = await http.get(
           Uri.parse('${Endpoint.checkoutProduct}${widget.salesId}'),
